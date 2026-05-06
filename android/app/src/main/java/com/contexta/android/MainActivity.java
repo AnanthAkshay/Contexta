@@ -10,9 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.contexta.android.action.HomeProfileController;
 import com.contexta.android.action.MeetingModeController;
+import com.contexta.android.action.MovementActionController;
+import com.contexta.android.detector.HomeDetector;
 import com.contexta.android.detector.MeetingDetector;
+import com.contexta.android.detector.MovementDetector;
 import com.contexta.android.model.CalendarEventResult;
+import com.contexta.android.model.HomeDetectionResult;
+import com.contexta.android.model.MovementResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +34,9 @@ import java.util.Locale;
  *   3. Scans the calendar for events within ±30 min
  *   4. Classifies each event (MEETING / NONE)
  *   5. Automatically enables Silent + DND when a meeting is detected
- *   6. Logs the full pipeline result to Logcat
+ *   6. Starts accelerometer-based movement detection
+ *   7. Detects home via WiFi SSID matching
+ *   8. Logs the full pipeline result to Logcat
  *
  * No UI is rendered — all output goes to Logcat.
  */
@@ -36,8 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Contexta.Main";
     private static final int RC_READ_CALENDAR = 1001;
+    private static final int RC_LOCATION = 1002;
 
     private MeetingModeController meetingModeController;
+    private MovementDetector movementDetector;
+    private MovementActionController movementActionController;
+    private HomeDetector homeDetector;
+    private HomeProfileController homeProfileController;
 
     // ── Lifecycle ────────────────────────────────────────────
 
@@ -47,10 +60,15 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(TAG, "═══════════════════════════════════════════");
         Log.i(TAG, " Contexta — Context-Aware Automation");
+        Log.i(TAG, " Day 3: Movement + Home Detection");
         Log.i(TAG, "═══════════════════════════════════════════");
 
-        // Initialise the meeting mode controller
+        // Initialise controllers
         meetingModeController = new MeetingModeController(this);
+        movementDetector = new MovementDetector(this);
+        movementActionController = new MovementActionController(this);
+        homeDetector = new HomeDetector(this);
+        homeProfileController = new HomeProfileController(this);
 
         // ── DND permission (must be granted manually in settings) ──
         if (!meetingModeController.hasDndPermission()) {
@@ -64,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         // ── Calendar permission (runtime) ─────────────────────
         if (hasCalendarPermission()) {
-            runDetection();
+            runDetectionPipeline();
         } else {
             requestCalendarPermission();
         }
@@ -76,6 +94,15 @@ public class MainActivity extends AppCompatActivity {
         // Re-check DND permission when user returns from settings
         if (meetingModeController != null && meetingModeController.hasDndPermission()) {
             Log.i(TAG, "✔ DND permission now granted (onResume).");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clean up movement detector
+        if (movementDetector != null) {
+            movementDetector.stopDetection();
         }
     }
 
@@ -93,6 +120,21 @@ public class MainActivity extends AppCompatActivity {
                 RC_READ_CALENDAR);
     }
 
+    private boolean hasLocationPermission() {
+        return ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestLocationPermission() {
+        Log.d(TAG, "Requesting ACCESS_FINE_LOCATION permission…");
+        ActivityCompat.requestPermissions(this,
+                new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                },
+                RC_LOCATION);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -103,18 +145,53 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "READ_CALENDAR permission GRANTED.");
-                runDetection();
+                runDetectionPipeline();
             } else {
                 Log.e(TAG, "READ_CALENDAR permission DENIED. Cannot read events.");
+                // Still run movement & home detection
+                runMovementDetection();
+                runHomeDetection();
+            }
+        } else if (requestCode == RC_LOCATION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "LOCATION permission GRANTED — re-running home detection.");
+                runHomeDetection();
+            } else {
+                Log.w(TAG, "LOCATION permission DENIED — using hardcoded SSID.");
+                runHomeDetection(); // Will use fallback
             }
         }
     }
 
-    // ── Detection + Action Pipeline ─────────────────────────
+    // ── Full Detection Pipeline ─────────────────────────────
 
-    private void runDetection() {
+    /**
+     * Runs all three detection features:
+     * 1. Calendar-based meeting detection (Day 2)
+     * 2. Accelerometer movement detection (Day 3 — Feature 2)
+     * 3. WiFi-based home detection (Day 3 — Feature 3)
+     */
+    private void runDetectionPipeline() {
+        // Feature 1: Meeting Detection
+        runMeetingDetection();
+
+        // Feature 2: Movement Detection
+        runMovementDetection();
+
+        // Feature 3: Home Detection
+        if (hasLocationPermission()) {
+            runHomeDetection();
+        } else {
+            requestLocationPermission();
+        }
+    }
+
+    // ── Feature 1: Meeting Detection ─────────────────────────
+
+    private void runMeetingDetection() {
         Log.i(TAG, "───────────────────────────────────────────");
-        Log.i(TAG, " Starting calendar scan…");
+        Log.i(TAG, " Feature 1: Calendar Meeting Detection");
         Log.i(TAG, "───────────────────────────────────────────");
 
         MeetingDetector detector = new MeetingDetector(this);
@@ -163,6 +240,54 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.i(TAG, "✔ No meeting detected. Ensuring normal mode.");
             meetingModeController.onContextChanged("NONE");
+        }
+    }
+
+    // ── Feature 2: Movement Detection ────────────────────────
+
+    private void runMovementDetection() {
+        Log.i(TAG, "───────────────────────────────────────────");
+        Log.i(TAG, " Feature 2: Accelerometer Movement Detection");
+        Log.i(TAG, "───────────────────────────────────────────");
+
+        movementDetector.startDetection(result -> {
+            if (result.isMoving()) {
+                Log.i(TAG, "🚶 MOVEMENT detected — variance: "
+                        + String.format(Locale.US, "%.3f", result.getVariance())
+                        + " | mode: " + result.getTransportMode());
+
+                // Notify the action controller
+                movementActionController.onMovementDetected(result.getTransportMode());
+            }
+        });
+
+        // Also do a one-shot detection for immediate feedback
+        MovementResult immediateResult = movementDetector.detectOnce();
+        Log.i(TAG, "Immediate detection: " + immediateResult.toJson().toString());
+    }
+
+    // ── Feature 3: Home Detection ────────────────────────────
+
+    private void runHomeDetection() {
+        Log.i(TAG, "───────────────────────────────────────────");
+        Log.i(TAG, " Feature 3: WiFi Home Detection");
+        Log.i(TAG, "───────────────────────────────────────────");
+
+        HomeDetectionResult homeResult = homeDetector.detect();
+        Log.i(TAG, "Home detection JSON: " + homeResult.toJson().toString());
+
+        // Switch profile based on detection
+        boolean switched = homeProfileController.onHomeContextChanged(
+                homeResult.getProfileMode());
+
+        if (homeResult.isHome()) {
+            Log.i(TAG, "🏠 HOME detected — profile switched to HOME");
+            Log.i(TAG, "   SSID match: " + homeResult.getCurrentSSID()
+                    + " == " + homeResult.getHomeSSID());
+        } else {
+            Log.i(TAG, "🌍 AWAY — profile set to AWAY");
+            Log.i(TAG, "   Current SSID: " + homeResult.getCurrentSSID()
+                    + " ≠ Home SSID: " + homeResult.getHomeSSID());
         }
     }
 

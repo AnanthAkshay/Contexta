@@ -11,6 +11,17 @@
     <!-- Do Not Disturb — requires Notification Policy Access (manual grant) -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
+    <!-- WiFi state — for home detection via SSID matching -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Location — required on Android 8+ to read WiFi SSID -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Accelerometer sensor — declared for clarity (no runtime permission needed) -->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+
     <application
         android:allowBackup="true"
         android:label="@string/app_name"

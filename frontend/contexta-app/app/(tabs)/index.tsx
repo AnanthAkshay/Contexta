@@ -1,282 +1,364 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  Animated,
-  Platform,
+  StyleSheet, Text, View, Pressable, ScrollView,
+  ActivityIndicator, Animated, Platform, Linking,
 } from 'react-native';
 
 import { getCalendarEvent, getInjectedMeetingEvent } from '@/services/calendarBridge';
-import {
-  determineContext,
-  type ContextResult,
-  type ContextType,
-  type ActionStatus,
-} from '@/services/contextDetector';
+import { determineContext, type ContextResult } from '@/services/contextDetector';
+import { getAccelerometerReading, injectMovingState, injectDrivingState } from '@/services/movementBridge';
+import { determineMovementContext, type MovementContextResult } from '@/services/movementDetector';
+import { getWiFiState, injectHomeState, injectAwayState, toggleSimulatedLocation } from '@/services/homeBridge';
+import { determineHomeContext, type HomeContextResult } from '@/services/homeDetector';
 
 // ── Design tokens ─────────────────────────────────────────────
 const C = {
-  bg:         '#0B0D12',
-  surface:    '#141720',
-  surfaceAlt: '#1A1E2A',
-  border:     '#1F2435',
-
-  accent:     '#6C63FF',
-  meeting:    '#FF6B6B',
-  meetingDim: 'rgba(255, 107, 107, 0.12)',
-  idle:       '#4ECB71',
-  idleDim:    'rgba(78, 203, 113, 0.12)',
-  dnd:        '#FF9F43',
-  dndDim:     'rgba(255, 159, 67, 0.12)',
-  override:   '#54A0FF',
-  inject:     '#FFBE5C',
-  reason:     '#B8BACC',
-
-  text:       '#F0F0F5',
-  textSec:    '#8A8FA6',
-  textDim:    '#454B5E',
+  bg: '#0B0D12', surface: '#141720', surfaceAlt: '#1A1E2A', border: '#1F2435',
+  accent: '#6C63FF', meeting: '#FF6B6B', meetingDim: 'rgba(255,107,107,0.12)',
+  idle: '#4ECB71', idleDim: 'rgba(78,203,113,0.12)',
+  dnd: '#FF9F43', dndDim: 'rgba(255,159,67,0.12)',
+  override: '#54A0FF', inject: '#FFBE5C', reason: '#B8BACC',
+  movement: '#00D2FF', movementDim: 'rgba(0,210,255,0.12)',
+  home: '#A78BFA', homeDim: 'rgba(167,139,250,0.12)',
+  homeActive: '#34D399', homeActiveDim: 'rgba(52,211,153,0.10)',
+  away: '#F97316', awayDim: 'rgba(249,115,22,0.12)',
+  text: '#F0F0F5', textSec: '#8A8FA6', textDim: '#454B5E',
 };
 
 // ── Log entry type ────────────────────────────────────────────
 interface LogEntry {
-  id: number;
-  time: string;
-  context: string;
-  action: string;
-  isOverride: boolean;
-}
-
-// ── Helpers ───────────────────────────────────────────────────
-function ctxColor(ctx: ContextType | null) {
-  if (ctx === 'MEETING') return C.meeting;
-  if (ctx === 'IDLE') return C.idle;
-  return C.textDim;
-}
-function actionColor(action: ActionStatus | null) {
-  return action === 'DND Enabled' ? C.dnd : C.idle;
+  id: number; time: string; context: string; action: string; isOverride: boolean; source: string;
 }
 
 // ══════════════════════════════════════════════════════════════
 export default function HomeScreen() {
-  const [result, setResult] = useState<ContextResult | null>(null);
+  const [meetingResult, setMeetingResult] = useState<ContextResult | null>(null);
+  const [movementResult, setMovementResult] = useState<MovementContextResult | null>(null);
+  const [homeResult, setHomeResult] = useState<HomeContextResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [isHomeMode, setIsHomeMode] = useState(false);
 
-  // Stable log ID counter (survives re-renders, no global mutable)
   const logIdRef = useRef(0);
-
   const pulseAnim = useRef(new Animated.Value(1)).current;
+
   const triggerPulse = useCallback(() => {
     pulseAnim.setValue(0.4);
-    Animated.spring(pulseAnim, {
-      toValue: 1, friction: 3, tension: 100, useNativeDriver: true,
-    }).start();
+    Animated.spring(pulseAnim, { toValue: 1, friction: 3, tension: 100, useNativeDriver: true }).start();
   }, [pulseAnim]);
 
-  // ── Log factory ────────────────────────────────────────────
-  const makeLog = useCallback((context: string, action: string, isOverride = false): LogEntry => {
+  const makeLog = useCallback((context: string, action: string, isOverride = false, source = 'System'): LogEntry => {
     logIdRef.current += 1;
     return {
       id: logIdRef.current,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      context,
-      action,
-      isOverride,
+      context, action, isOverride, source,
     };
   }, []);
 
-  // ── Handlers ───────────────────────────────────────────────
-
-  const handleDetect = useCallback(async () => {
+  // ── Meeting Detection ───────────────────────────────────────
+  const handleDetectMeeting = useCallback(async () => {
     setLoading(true);
     try {
       const event = await getCalendarEvent();
       const ctx = determineContext(event, 'Calendar');
-      setResult(ctx);
-      setLogs((prev) => [makeLog(ctx.context, ctx.action), ...prev]);
+      setMeetingResult(ctx);
+      setLogs(p => [makeLog(ctx.context, ctx.action, false, 'Calendar'), ...p]);
       triggerPulse();
-    } catch (err) {
-      console.error('Detection failed:', err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   }, [triggerPulse, makeLog]);
 
-  const handleInject = useCallback(() => {
+  const handleInjectMeeting = useCallback(() => {
     const event = getInjectedMeetingEvent();
     const ctx = determineContext(event, 'Manual');
-    setResult(ctx);
-    setLogs((prev) => [makeLog(ctx.context, ctx.action), ...prev]);
+    setMeetingResult(ctx);
+    setLogs(p => [makeLog(ctx.context, ctx.action, false, 'Manual'), ...p]);
     triggerPulse();
   }, [triggerPulse, makeLog]);
 
   const handleOverride = useCallback(() => {
-    console.log('┌─── Manual Override ─────────────────────');
-    console.log('│ User pressed "Turn Sound Back ON"');
-    console.log('│ → Action: Normal Mode (override)');
-    console.log('└──────────────────────────────────────────');
-    setResult((prev) => prev ? { ...prev, action: 'Normal Mode', reason: 'User override — sound restored' } : prev);
-    setLogs((prev) => [makeLog('OVERRIDE', 'SOUND ON', true), ...prev]);
+    setMeetingResult(prev => prev ? { ...prev, action: 'Normal Mode', reason: 'User override — sound restored' } : prev);
+    setLogs(p => [makeLog('OVERRIDE', 'SOUND ON', true, 'User'), ...p]);
     triggerPulse();
   }, [triggerPulse, makeLog]);
 
-  // ── Derived ────────────────────────────────────────────────
-  const ctx = result?.context ?? null;
-  const action = result?.action ?? null;
-  const dot = ctxColor(ctx);
-  const isDnd = action === 'DND Enabled';
+  // ── Movement Detection ──────────────────────────────────────
+  const handleDetectMovement = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getAccelerometerReading();
+      const ctx = determineMovementContext(data);
+      setMovementResult(ctx);
+      setLogs(p => [makeLog(ctx.context, ctx.suggestion, false, 'Accelerometer'), ...p]);
+      triggerPulse();
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  }, [triggerPulse, makeLog]);
 
-  const totalActions = logs.filter((l) => !l.isOverride).length;
-  const totalOverrides = logs.filter((l) => l.isOverride).length;
+  const handleInjectWalking = useCallback(() => {
+    const data = injectMovingState();
+    const ctx = determineMovementContext(data);
+    setMovementResult(ctx);
+    setLogs(p => [makeLog('WALKING', ctx.suggestion, false, 'Demo'), ...p]);
+    triggerPulse();
+  }, [triggerPulse, makeLog]);
+
+  const handleInjectDriving = useCallback(() => {
+    const data = injectDrivingState();
+    const ctx = determineMovementContext(data);
+    setMovementResult(ctx);
+    setLogs(p => [makeLog('COMMUTING', ctx.suggestion, false, 'Demo'), ...p]);
+    triggerPulse();
+  }, [triggerPulse, makeLog]);
+
+  const handleOpenMaps = useCallback(() => {
+    Linking.openURL('https://maps.google.com').catch(() => {});
+    setLogs(p => [makeLog('ACTION', 'Maps Intent Sent', false, 'CTA'), ...p]);
+  }, [makeLog]);
+
+  const handleOpenMusic = useCallback(() => {
+    Linking.openURL('https://open.spotify.com').catch(() => {
+      Linking.openURL('https://music.youtube.com').catch(() => {});
+    });
+    setLogs(p => [makeLog('ACTION', 'Music Intent Sent', false, 'CTA'), ...p]);
+  }, [makeLog]);
+
+  // ── Home Detection ──────────────────────────────────────────
+  const handleDetectHome = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getWiFiState();
+      const ctx = determineHomeContext(data);
+      setHomeResult(ctx);
+      setIsHomeMode(ctx.isHome);
+      setLogs(p => [makeLog(ctx.context, `Profile → ${ctx.profile.mode}`, false, 'WiFi'), ...p]);
+      triggerPulse();
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  }, [triggerPulse, makeLog]);
+
+  const handleInjectHome = useCallback(() => {
+    const data = injectHomeState();
+    const ctx = determineHomeContext(data);
+    setHomeResult(ctx);
+    setIsHomeMode(true);
+    setLogs(p => [makeLog('HOME', 'Profile → HOME', false, 'Demo'), ...p]);
+    triggerPulse();
+  }, [triggerPulse, makeLog]);
+
+  const handleInjectAway = useCallback(() => {
+    const data = injectAwayState();
+    const ctx = determineHomeContext(data);
+    setHomeResult(ctx);
+    setIsHomeMode(false);
+    setLogs(p => [makeLog('AWAY', 'Profile → AWAY', false, 'Demo'), ...p]);
+    triggerPulse();
+  }, [triggerPulse, makeLog]);
+
+  // ── Derived values ─────────────────────────────────────────
+  const meetingCtx = meetingResult?.context ?? null;
+  const isDnd = meetingResult?.action === 'DND Enabled';
+  const totalActions = logs.filter(l => !l.isOverride).length;
+  const totalOverrides = logs.filter(l => l.isOverride).length;
   const accuracy = totalActions > 0 ? Math.min(90 + Math.floor(totalActions / 2), 97) : 0;
 
-  // ── Render ─────────────────────────────────────────────────
-  return (
-    <ScrollView style={st.scroll} contentContainerStyle={st.scrollContent} bounces={false}>
+  const bgColor = isHomeMode ? '#0A1210' : C.bg;
 
-      {/* ── Header ──────────────────────────────────────────── */}
+  return (
+    <ScrollView style={[st.scroll, { backgroundColor: bgColor }]} contentContainerStyle={st.scrollContent} bounces={false}>
+
+      {/* ── Header ────────────────────────────────────────── */}
       <View style={st.header}>
         <Text style={st.logo}>◉</Text>
         <Text style={st.brand}>Contexta</Text>
         <Text style={st.tagline}>Context-Aware Automation</Text>
       </View>
 
-      {/* ── Status Ring ─────────────────────────────────────── */}
-      <View style={[st.ring, { borderColor: dot, shadowColor: dot }]}>
-        <Animated.View
-          style={[st.dot, { backgroundColor: dot, transform: [{ scale: pulseAnim }] }]}
-        />
-        <Text style={[st.ringLabel, { color: dot }]}>{ctx ?? '—'}</Text>
+      {/* ── Home Mode Banner ──────────────────────────────── */}
+      {isHomeMode && (
+        <View style={st.homeBanner}>
+          <Text style={st.homeBannerIcon}>🏠</Text>
+          <Text style={st.homeBannerText}>Home Mode Active</Text>
+        </View>
+      )}
+
+      {/* ═══ CONTEXT CARD 1: MEETING ═══════════════════════ */}
+      <View style={[st.ctxCard, meetingCtx === 'MEETING' && { borderColor: C.meeting + '40' }]}>
+        <View style={st.ctxCardHeader}>
+          <View style={[st.ctxDot, { backgroundColor: meetingCtx === 'MEETING' ? C.meeting : C.idle }]} />
+          <Text style={st.ctxCardTitle}>Meeting Detection</Text>
+          <Text style={[st.ctxBadge, { color: isDnd ? C.dnd : C.idle, backgroundColor: isDnd ? C.dndDim : C.idleDim }]}>
+            {isDnd ? '🔕 DND' : '🔔 Normal'}
+          </Text>
+        </View>
+        <Text style={st.ctxReason}>{meetingResult?.reason ?? 'Tap "Detect" to scan calendar'}</Text>
+        {meetingResult && (
+          <View style={st.ctxMeta}>
+            <Text style={st.ctxMetaItem}>Conf: {(meetingResult.confidence * 100).toFixed(0)}%</Text>
+            <Text style={st.ctxMetaItem}>Source: {meetingResult.source}</Text>
+            <Text style={st.ctxMetaItem}>{meetingResult.detectedAt}</Text>
+          </View>
+        )}
+        <View style={st.ctxActions}>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnAccent, pressed && st.btnPressed]} onPress={handleDetectMeeting} disabled={loading}>
+            {loading ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.ctxBtnTxt}>📅 Detect</Text>}
+          </Pressable>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnOutline, pressed && st.btnPressed]} onPress={handleInjectMeeting}>
+            <Text style={[st.ctxBtnTxt, { color: C.inject }]}>⚡ Inject</Text>
+          </Pressable>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnOutline, pressed && st.btnPressed, !isDnd && st.btnDimmed]} onPress={handleOverride} disabled={!isDnd}>
+            <Text style={[st.ctxBtnTxt, { color: isDnd ? C.override : C.textDim }]}>🔔 Override</Text>
+          </Pressable>
+        </View>
       </View>
 
-      {/* ── Action Badge ────────────────────────────────────── */}
-      <View style={[st.actionBadge, { backgroundColor: isDnd ? C.dndDim : C.idleDim }]}>
-        <Text style={st.badgeIcon}>{isDnd ? '🔕' : '🔔'}</Text>
-        <Text style={[st.badgeText, { color: actionColor(action) }]}>
-          {action ?? 'Awaiting Detection'}
+      {/* ═══ CONTEXT CARD 2: MOVEMENT ═════════════════════= */}
+      <View style={[st.ctxCard, movementResult?.isMoving && { borderColor: C.movement + '40' }]}>
+        <View style={st.ctxCardHeader}>
+          <View style={[st.ctxDot, { backgroundColor: movementResult?.isMoving ? C.movement : C.textDim }]} />
+          <Text style={st.ctxCardTitle}>Movement Detection</Text>
+          {movementResult?.isMoving && (
+            <Text style={[st.ctxBadge, { color: C.movement, backgroundColor: C.movementDim }]}>
+              {movementResult.transportMode === 'driving' ? '🚗' : '🚶'} {movementResult.context}
+            </Text>
+          )}
+        </View>
+        <Text style={st.ctxReason}>
+          {movementResult
+            ? movementResult.isMoving
+              ? `Commuting — ${movementResult.suggestion}`
+              : movementResult.reason
+            : 'Tap "Detect" to read accelerometer'}
         </Text>
+        {movementResult && (
+          <View style={st.ctxMeta}>
+            <Text style={st.ctxMetaItem}>Var: {movementResult.variance.toFixed(3)}</Text>
+            <Text style={st.ctxMetaItem}>Conf: {(movementResult.confidence * 100).toFixed(0)}%</Text>
+            <Text style={st.ctxMetaItem}>ETA: {movementResult.eta}</Text>
+          </View>
+        )}
+
+        {/* Movement CTAs — Maps & Music */}
+        {movementResult?.isMoving && (
+          <View style={st.ctaCont}>
+            <Pressable style={({ pressed }) => [st.ctaBtn, { backgroundColor: '#1A73E8' }, pressed && st.btnPressed]} onPress={handleOpenMaps}>
+              <Text style={st.ctaBtnTxt}>🗺️ Open Maps</Text>
+            </Pressable>
+            <Pressable style={({ pressed }) => [st.ctaBtn, { backgroundColor: '#1DB954' }, pressed && st.btnPressed]} onPress={handleOpenMusic}>
+              <Text style={st.ctaBtnTxt}>🎵 Play Music</Text>
+            </Pressable>
+          </View>
+        )}
+
+        <View style={st.ctxActions}>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnMovement, pressed && st.btnPressed]} onPress={handleDetectMovement} disabled={loading}>
+            <Text style={st.ctxBtnTxt}>📱 Detect</Text>
+          </Pressable>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnOutline, pressed && st.btnPressed]} onPress={handleInjectWalking}>
+            <Text style={[st.ctxBtnTxt, { color: C.movement }]}>🚶 Walking</Text>
+          </Pressable>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnOutline, pressed && st.btnPressed]} onPress={handleInjectDriving}>
+            <Text style={[st.ctxBtnTxt, { color: C.inject }]}>🚗 Driving</Text>
+          </Pressable>
+        </View>
       </View>
 
-      {/* ── Context Card ────────────────────────────────────── */}
-      <View style={[st.card, ctx && { borderColor: dot + '30' }]}>
-        <Text style={st.cardTitle}>Detection Result</Text>
-        <InfoRow label="Context"    value={result?.context ?? '—'}
-                 valueColor={ctx === 'MEETING' ? C.meeting : ctx === 'IDLE' ? C.idle : undefined}
-                 bold={ctx === 'MEETING'} />
-        <InfoRow label="Confidence" value={result ? `${(result.confidence * 100).toFixed(0)}%` : '—'} />
-        <InfoRow label="Source"     value={result?.source ?? '—'} />
-        <InfoRow label="Event"      value={result?.eventTitle || '—'} />
-        <InfoRow label="Reason"     value={result?.reason ?? '—'} valueColor={C.reason} />
-        <InfoRow label="Action"     value={action ?? '—'} valueColor={actionColor(action)} bold />
-        <InfoRow label="Detected"   value={result?.detectedAt ?? '—'} last />
+      {/* ═══ CONTEXT CARD 3: HOME ═════════════════════════= */}
+      <View style={[st.ctxCard, isHomeMode && { borderColor: C.homeActive + '40', backgroundColor: C.homeActiveDim }]}>
+        <View style={st.ctxCardHeader}>
+          <View style={[st.ctxDot, { backgroundColor: isHomeMode ? C.homeActive : C.away }]} />
+          <Text style={st.ctxCardTitle}>Home Detection</Text>
+          <Text style={[st.ctxBadge, {
+            color: isHomeMode ? C.homeActive : C.away,
+            backgroundColor: isHomeMode ? C.homeActiveDim : C.awayDim,
+          }]}>
+            {isHomeMode ? '🏠 HOME' : '🌍 AWAY'}
+          </Text>
+        </View>
+        <Text style={st.ctxReason}>
+          {homeResult
+            ? homeResult.reason
+            : 'Tap "Detect" to check WiFi SSID'}
+        </Text>
+        {homeResult && (
+          <>
+            <View style={st.ctxMeta}>
+              <Text style={st.ctxMetaItem}>SSID: {homeResult.currentSSID}</Text>
+              <Text style={st.ctxMetaItem}>Conf: {(homeResult.confidence * 100).toFixed(0)}%</Text>
+              <Text style={st.ctxMetaItem}>{homeResult.detectedAt}</Text>
+            </View>
+            {isHomeMode && (
+              <View style={st.profileInfo}>
+                <Text style={st.profileItem}>🖼 {homeResult.profile.wallpaperHint}</Text>
+                <Text style={st.profileItem}>🔊 Vol: {homeResult.profile.volumeLevel}</Text>
+                <Text style={st.profileItem}>🔔 {homeResult.profile.notificationGrouping}</Text>
+                <Text style={st.profileItem}>📡 {homeResult.profile.bluetoothDevice}</Text>
+              </View>
+            )}
+          </>
+        )}
+        <View style={st.ctxActions}>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnHome, pressed && st.btnPressed]} onPress={handleDetectHome} disabled={loading}>
+            <Text style={st.ctxBtnTxt}>📶 Detect</Text>
+          </Pressable>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnOutline, pressed && st.btnPressed]} onPress={handleInjectHome}>
+            <Text style={[st.ctxBtnTxt, { color: C.homeActive }]}>🏠 Home</Text>
+          </Pressable>
+          <Pressable style={({ pressed }) => [st.ctxBtn, st.btnOutline, pressed && st.btnPressed]} onPress={handleInjectAway}>
+            <Text style={[st.ctxBtnTxt, { color: C.away }]}>🌍 Away</Text>
+          </Pressable>
+        </View>
       </View>
 
-      {/* ── Summary Stats ───────────────────────────────────── */}
+      {/* ── Summary Stats ─────────────────────────────────── */}
       <View style={st.summaryRow}>
         <StatBox label="Actions" value={String(totalActions)} color={C.accent} />
         <StatBox label="Overrides" value={String(totalOverrides)} color={C.override} />
         <StatBox label="Accuracy" value={totalActions > 0 ? `${accuracy}%` : '—'} color={C.idle} />
       </View>
 
-      {/* ── Intelligence Labels ─────────────────────────────── */}
+      {/* ── Intelligence Labels ───────────────────────────── */}
       <View style={st.intelRow}>
-        <IntelChip icon="⚡" text="< 100ms latency" />
-        <IntelChip icon="🧠" text="On-device AI" />
-        <IntelChip icon="🔒" text="No data leaves device" />
+        <Chip icon="⚡" text="< 100ms latency" />
+        <Chip icon="🧠" text="On-device AI" />
+        <Chip icon="🔒" text="No data leaves device" />
       </View>
 
-      {/* ── Buttons ─────────────────────────────────────────── */}
-      <View style={st.btnGroup}>
-        <Pressable
-          style={({ pressed }) => [st.btn, st.btnPrimary, (pressed || loading) && st.btnPressed]}
-          onPress={handleDetect}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" size="small" />
-          ) : (
-            <><Text style={st.btnEmoji}>📅</Text><Text style={st.btnLabel}>Detect from Calendar</Text></>
-          )}
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [st.btn, st.btnInject, pressed && st.btnPressed]}
-          onPress={handleInject}
-        >
-          <Text style={st.btnEmoji}>⚡</Text>
-          <Text style={[st.btnLabel, { color: C.inject }]}>Inject Meeting (Demo)</Text>
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [st.btn, st.btnOverride, pressed && st.btnPressed, !isDnd && st.btnDimmed]}
-          onPress={handleOverride}
-          disabled={!isDnd}
-        >
-          <Text style={st.btnEmoji}>🔔</Text>
-          <Text style={[st.btnLabel, { color: isDnd ? C.override : C.textDim }]}>
-            Turn Sound Back ON
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* ── Event Log ───────────────────────────────────────── */}
+      {/* ── Event Log ─────────────────────────────────────── */}
       {logs.length > 0 && (
         <View style={st.logCard}>
           <Text style={st.cardTitle}>Event Log</Text>
-          {logs.slice(0, 8).map((entry) => (
+          {logs.slice(0, 10).map(entry => (
             <View key={entry.id} style={st.logRow}>
               <Text style={st.logTime}>[{entry.time}]</Text>
-              <Text
-                style={[
-                  st.logText,
-                  entry.isOverride && { color: C.override },
-                  !entry.isOverride && entry.context === 'MEETING' && { color: C.meeting },
-                  !entry.isOverride && entry.context === 'IDLE' && { color: C.idle },
-                ]}
-              >
-                {entry.isOverride
-                  ? `Override → ${entry.action}`
-                  : `${entry.context} → ${entry.action}`}
+              <Text style={[st.logSource, {
+                color: entry.source === 'Accelerometer' ? C.movement
+                     : entry.source === 'WiFi' ? C.home
+                     : entry.source === 'Calendar' ? C.meeting
+                     : C.textSec
+              }]}>{entry.source}</Text>
+              <Text style={[st.logText, {
+                color: entry.isOverride ? C.override
+                     : entry.context === 'MEETING' ? C.meeting
+                     : entry.context === 'WALKING' || entry.context === 'COMMUTING' ? C.movement
+                     : entry.context === 'HOME' ? C.homeActive
+                     : entry.context === 'AWAY' ? C.away
+                     : C.text
+              }]} numberOfLines={1}>
+                {entry.isOverride ? `Override → ${entry.action}` : `${entry.context} → ${entry.action}`}
               </Text>
             </View>
           ))}
         </View>
       )}
 
-      {/* ── Footer ──────────────────────────────────────────── */}
-      <Text style={st.footer}>
-        On-device processing · No cloud dependency · Works offline
-      </Text>
+      <Text style={st.footer}>On-device processing · No cloud dependency · Works offline</Text>
     </ScrollView>
   );
 }
 
 // ── Sub-components ───────────────────────────────────────────
-
-function InfoRow({ label, value, valueColor, bold = false, last = false }: {
-  label: string; value: string; valueColor?: string; bold?: boolean; last?: boolean;
-}) {
-  return (
-    <View style={[st.row, !last && st.rowBorder]}>
-      <Text style={st.rowLabel}>{label}</Text>
-      <Text
-        style={[
-          st.rowValue,
-          valueColor ? { color: valueColor } : null,
-          bold ? { fontWeight: '800' } : null,
-        ]}
-        numberOfLines={1}
-      >
-        {value}
-      </Text>
-    </View>
-  );
-}
-
 function StatBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <View style={st.statBox}>
@@ -286,11 +368,11 @@ function StatBox({ label, value, color }: { label: string; value: string; color:
   );
 }
 
-function IntelChip({ icon, text }: { icon: string; text: string }) {
+function Chip({ icon, text }: { icon: string; text: string }) {
   return (
-    <View style={st.intelChip}>
-      <Text style={st.intelIcon}>{icon}</Text>
-      <Text style={st.intelText}>{text}</Text>
+    <View style={st.chip}>
+      <Text style={st.chipIcon}>{icon}</Text>
+      <Text style={st.chipText}>{text}</Text>
     </View>
   );
 }
@@ -299,64 +381,69 @@ function IntelChip({ icon, text }: { icon: string; text: string }) {
 // STYLES
 // ══════════════════════════════════════════════════════════════
 const st = StyleSheet.create({
-  scroll:        { flex: 1, backgroundColor: C.bg },
-  scrollContent: { alignItems: 'center', paddingTop: Platform.OS === 'android' ? 48 : 20, paddingBottom: 44, paddingHorizontal: 20 },
+  scroll: { flex: 1, backgroundColor: C.bg },
+  scrollContent: { alignItems: 'center', paddingTop: Platform.OS === 'android' ? 48 : 20, paddingBottom: 44, paddingHorizontal: 16 },
 
-  // Header
-  header:  { alignItems: 'center', marginBottom: 18 },
-  logo:    { fontSize: 36, color: C.accent, marginBottom: 2 },
-  brand:   { fontSize: 28, fontWeight: '800', color: C.text, letterSpacing: 1.8 },
-  tagline: { fontSize: 11, color: C.textSec, marginTop: 3, letterSpacing: 1, textTransform: 'uppercase' },
+  header: { alignItems: 'center', marginBottom: 14 },
+  logo: { fontSize: 32, color: C.accent, marginBottom: 2 },
+  brand: { fontSize: 26, fontWeight: '800', color: C.text, letterSpacing: 1.8 },
+  tagline: { fontSize: 10, color: C.textSec, marginTop: 2, letterSpacing: 1, textTransform: 'uppercase' },
 
-  // Ring
-  ring:      { width: 96, height: 96, borderRadius: 48, borderWidth: 2.5, alignItems: 'center', justifyContent: 'center', marginBottom: 12,
-               ...Platform.select({ ios: { shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.45, shadowRadius: 18 }, android: { elevation: 10 } }) },
-  dot:       { width: 22, height: 22, borderRadius: 11, marginBottom: 4 },
-  ringLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
+  // Home mode banner
+  homeBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(52,211,153,0.15)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, marginBottom: 12, gap: 8, borderWidth: 1, borderColor: 'rgba(52,211,153,0.3)' },
+  homeBannerIcon: { fontSize: 18 },
+  homeBannerText: { fontSize: 14, fontWeight: '700', color: '#34D399', letterSpacing: 0.5 },
 
-  // Action Badge
-  actionBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, marginBottom: 14, gap: 6 },
-  badgeIcon:   { fontSize: 14 },
-  badgeText:   { fontSize: 12, fontWeight: '700', letterSpacing: 0.5 },
+  // Context cards
+  ctxCard: { width: '100%', backgroundColor: C.surface, borderRadius: 16, borderWidth: 1, borderColor: C.border, padding: 14, marginBottom: 10,
+    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.10, shadowRadius: 10 }, android: { elevation: 3 } }) },
+  ctxCardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 8 },
+  ctxDot: { width: 10, height: 10, borderRadius: 5 },
+  ctxCardTitle: { fontSize: 13, fontWeight: '700', color: C.text, flex: 1, letterSpacing: 0.3 },
+  ctxBadge: { fontSize: 10, fontWeight: '700', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, overflow: 'hidden', letterSpacing: 0.3 },
+  ctxReason: { fontSize: 12, color: C.reason, marginBottom: 8, lineHeight: 18 },
+  ctxMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 10 },
+  ctxMetaItem: { fontSize: 10, color: C.textDim, fontWeight: '600' },
 
-  // Card
-  card:      { width: '100%', backgroundColor: C.surface, borderRadius: 16, borderWidth: 1, borderColor: C.border, paddingTop: 12, paddingBottom: 2, paddingHorizontal: 16, marginBottom: 14,
-               ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.10, shadowRadius: 10 }, android: { elevation: 3 } }) },
-  cardTitle: { fontSize: 10, fontWeight: '700', color: C.textDim, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 4 },
-  row:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
-  rowBorder: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.border },
-  rowLabel:  { fontSize: 13, color: C.textSec, fontWeight: '500' },
-  rowValue:  { fontSize: 13, color: C.text, fontWeight: '600', flexShrink: 1, textAlign: 'right' },
-
-  // Summary Stats
-  summaryRow: { flexDirection: 'row', width: '100%', gap: 8, marginBottom: 10 },
-  statBox:    { flex: 1, backgroundColor: C.surface, borderRadius: 12, borderWidth: 1, borderColor: C.border, paddingVertical: 10, alignItems: 'center' },
-  statValue:  { fontSize: 20, fontWeight: '800' },
-  statLabel:  { fontSize: 10, color: C.textDim, marginTop: 2, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },
-
-  // Intelligence Labels
-  intelRow:  { flexDirection: 'row', width: '100%', gap: 6, marginBottom: 14, flexWrap: 'wrap', justifyContent: 'center' },
-  intelChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surfaceAlt, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, gap: 4 },
-  intelIcon: { fontSize: 11 },
-  intelText: { fontSize: 10, color: C.textSec, fontWeight: '600', letterSpacing: 0.3 },
-
-  // Buttons
-  btnGroup:   { width: '100%', gap: 8, marginBottom: 14 },
-  btn:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 48, borderRadius: 12, gap: 8 },
-  btnPrimary: { backgroundColor: C.accent, ...Platform.select({ ios: { shadowColor: C.accent, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.3, shadowRadius: 8 }, android: { elevation: 5 } }) },
-  btnInject:  { borderWidth: 1.5, borderColor: C.inject + '50' },
-  btnOverride:{ borderWidth: 1.5, borderColor: C.override + '50' },
-  btnDimmed:  { opacity: 0.35, borderColor: C.textDim + '30' },
+  ctxActions: { flexDirection: 'row', gap: 6 },
+  ctxBtn: { flex: 1, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  ctxBtnTxt: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  btnAccent: { backgroundColor: C.accent },
+  btnMovement: { backgroundColor: '#0891B2' },
+  btnHome: { backgroundColor: C.home },
+  btnOutline: { borderWidth: 1.5, borderColor: C.border },
   btnPressed: { opacity: 0.7, transform: [{ scale: 0.97 }] },
-  btnEmoji:   { fontSize: 15 },
-  btnLabel:   { color: '#fff', fontSize: 14, fontWeight: '700', letterSpacing: 0.3 },
+  btnDimmed: { opacity: 0.35 },
 
-  // Event Log
-  logCard: { width: '100%', backgroundColor: C.surface, borderRadius: 16, borderWidth: 1, borderColor: C.border, paddingTop: 12, paddingBottom: 8, paddingHorizontal: 16, marginBottom: 14 },
-  logRow:  { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, gap: 8 },
-  logTime: { fontSize: 11, color: C.textDim, fontWeight: '600', fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' },
-  logText: { fontSize: 12, color: C.text, fontWeight: '600' },
+  // Movement CTAs
+  ctaCont: { flexDirection: 'row', gap: 8, marginBottom: 10 },
+  ctaBtn: { flex: 1, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }, android: { elevation: 3 } }) },
+  ctaBtnTxt: { color: '#fff', fontSize: 13, fontWeight: '700', letterSpacing: 0.3 },
 
-  // Footer
+  // Home profile info
+  profileInfo: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10, backgroundColor: 'rgba(52,211,153,0.08)', padding: 8, borderRadius: 8 },
+  profileItem: { fontSize: 10, color: C.textSec, fontWeight: '600' },
+
+  // Summary stats
+  summaryRow: { flexDirection: 'row', width: '100%', gap: 8, marginBottom: 10 },
+  statBox: { flex: 1, backgroundColor: C.surface, borderRadius: 12, borderWidth: 1, borderColor: C.border, paddingVertical: 10, alignItems: 'center' },
+  statValue: { fontSize: 20, fontWeight: '800' },
+  statLabel: { fontSize: 10, color: C.textDim, marginTop: 2, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },
+
+  // Intel chips
+  intelRow: { flexDirection: 'row', width: '100%', gap: 6, marginBottom: 12, flexWrap: 'wrap', justifyContent: 'center' },
+  chip: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surfaceAlt, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, gap: 4 },
+  chipIcon: { fontSize: 11 },
+  chipText: { fontSize: 10, color: C.textSec, fontWeight: '600', letterSpacing: 0.3 },
+
+  // Event log
+  cardTitle: { fontSize: 10, fontWeight: '700', color: C.textDim, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 4 },
+  logCard: { width: '100%', backgroundColor: C.surface, borderRadius: 16, borderWidth: 1, borderColor: C.border, paddingTop: 12, paddingBottom: 8, paddingHorizontal: 14, marginBottom: 12 },
+  logRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4, gap: 6 },
+  logTime: { fontSize: 10, color: C.textDim, fontWeight: '600', fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' },
+  logSource: { fontSize: 9, fontWeight: '700', minWidth: 60 },
+  logText: { fontSize: 11, color: C.text, fontWeight: '600', flex: 1 },
+
   footer: { marginTop: 6, fontSize: 9, color: C.textDim, textAlign: 'center', letterSpacing: 0.4 },
 });

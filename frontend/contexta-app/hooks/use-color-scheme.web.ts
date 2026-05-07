@@ -1,21 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
-
-/**
- * To support static rendering, this value needs to be re-calculated on the client side for web
- */
-export function useColorScheme() {
-  const [hasHydrated, setHasHydrated] = useState(false);
-
+import { useEffect } from 'react';
+ 
+export function useColorScheme(): 'light' {
   useEffect(() => {
-    setHasHydrated(true);
+    // Lock the document color-scheme so the browser never flashes dark styles.
+    document.documentElement.style.colorScheme = 'light';
+ 
+    // Also ensure a white background is painted immediately on load.
+    document.documentElement.style.backgroundColor = '#ffffff';
   }, []);
-
-  const colorScheme = useRNColorScheme();
-
-  if (hasHydrated) {
-    return colorScheme;
-  }
-
+ 
   return 'light';
 }

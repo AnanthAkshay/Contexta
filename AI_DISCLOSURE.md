@@ -1,7 +1,7 @@
 # AI Disclosure
 
 **Project:** Contexta — context-aware smartphone automation app (Samsung Hackathon)
-**Team Name:** [Team Name]
+**Team Name:** Team Beta Onepiece — M.S. Ramaiah Institute of Technology
 
 ## 1. Overview
 This document discloses the use of AI tools during the development of Contexta, in accordance with the hackathon guidelines. AI assistance was utilized to accelerate boilerplate generation and documentation, while the core intellectual property and decision-making remain human-driven.
@@ -26,4 +26,4 @@ The following AI tools were used during development:
 All AI-generated code snippets were thoroughly reviewed, manually tested, and fully understood by the team before being integrated into the codebase. The team maintains full responsibility for the stability and security of the application.
 
 ## 6. Contact
-[Team contact info]
+Akshay A (1MS24IS013) — akshaya@example.com

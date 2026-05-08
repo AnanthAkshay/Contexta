@@ -1,15 +1,38 @@
-# Contexta — Android Calendar Context Module
+# Contexta — Android Native Context Module
 
-Calendar-based context detection for the Contexta automation system.
+Native context detection engine for the Contexta automation system.
 
-## What It Does
+## System Architecture
 
-1. **Reads** device calendar events within a ±30-minute window
-2. **Classifies** each event as `MEETING` or `NONE` using keyword matching
-3. **Logs** all results to Logcat for debugging
-4. **Returns** a JSON result for downstream automation
+The Android module acts as the sensor fusion and execution layer. It runs on-device without requiring a continuous cloud connection.
 
-## Detection Keywords
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       MainActivity                          │
+│  (Orchestrator, Permission Flow, Lifecycle Management)      │
+└──────────────┬───────────────────────┬──────────────────────┘
+               │                       │
+      ┌────────▼────────┐     ┌────────▼────────┐
+      │  Detectors      │     │  Action Contrls │
+      │  (Sensors)      │     │  (Execution)    │
+      └────────┬────────┘     └────────┬────────┘
+               │                       │
+      ├─ MeetingDetector      ├─ MeetingModeController
+      ├─ MovementDetector     ├─ MovementActionController
+      └─ HomeDetector         └─ HomeProfileController
+```
+
+### 1. Detectors (Observe Layer)
+- **MeetingDetector:** Reads Calendar events (±30 min window). Classifies via keyword NLP.
+- **MovementDetector:** Samples Accelerometer. Computes variance to detect WALKING, DRIVING, or STATIONARY.
+- **HomeDetector:** Reads WiFi SSID and matches against saved Home Network to determine HOME or AWAY.
+
+### 2. Action Controllers (Act Layer)
+- **MeetingModeController:** Toggles Android DND and Silent Mode via Notification Policy.
+- **MovementActionController:** Triggers Intents (e.g., launching Google Maps or Music) based on transport mode.
+- **HomeProfileController:** Adjusts volume, brightness, and system profiles based on location context.
+
+## Detection Keywords (Calendar)
 
 Events containing any of these words (case-insensitive) are classified as `MEETING`:
 
@@ -22,6 +45,8 @@ Events containing any of these words (case-insensitive) are classified as `MEETI
 
 ## Output Format
 
+The module outputs structured JSON to Logcat for downstream consumption (e.g., by the React Native layer).
+
 ```json
 {
   "event": "MEETING",
@@ -30,39 +55,67 @@ Events containing any of these words (case-insensitive) are classified as `MEETI
 }
 ```
 
+```json
+{
+  "isMoving": true,
+  "variance": 12.4,
+  "transportMode": "walking",
+  "timestamp": 1710000050
+}
+```
+
+```json
+{
+  "isHome": true,
+  "currentSSID": "\"MyHomeWiFi\"",
+  "homeSSID": "\"MyHomeWiFi\"",
+  "profileMode": "HOME"
+}
+```
+
 ## Files
 
 ```
 android/app/src/main/
-├── AndroidManifest.xml                          # READ_CALENDAR permission
+├── AndroidManifest.xml                          # Permissions (CALENDAR, LOCATION, DND)
 └── java/com/contexta/android/
-    ├── MainActivity.java                        # Entry point + permission flow
+    ├── MainActivity.java                        # Entry point + pipeline orchestration
     ├── detector/
-    │   └── MeetingDetector.java                 # Calendar query + classification
+    │   ├── MeetingDetector.java                 # Calendar query + classification
+    │   ├── MovementDetector.java                # Accelerometer sampling + variance math
+    │   └── HomeDetector.java                    # WiFi SSID matching
+    ├── action/
+    │   ├── MeetingModeController.java           # DND + Ringer adjustments
+    │   ├── MovementActionController.java        # Maps / Music Intents
+    │   └── HomeProfileController.java           # Volume / Wallpaper profiles
     └── model/
-        └── CalendarEventResult.java             # Result POJO with JSON support
+        ├── CalendarEventResult.java             
+        ├── MovementResult.java
+        └── HomeDetectionResult.java
 ```
 
 ## Permissions
 
-- `READ_CALENDAR` — declared in manifest, requested at runtime
+- `READ_CALENDAR` — Declared in manifest, requested at runtime.
+- `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION` — Required for WiFi SSID reading in newer Android versions.
+- `ACCESS_NOTIFICATION_POLICY` — Required for DND toggling (Settings Intent).
 
 ## Example Logcat Output
 
 ```
 I/Contexta.Main: ═══════════════════════════════════════════
-I/Contexta.Main:  Contexta — Calendar Context Detection
+I/Contexta.Main:  Contexta — Context-Aware Automation
+I/Contexta.Main:  Day 3: Movement + Home Detection
 I/Contexta.Main: ═══════════════════════════════════════════
 I/Contexta.Main: ───────────────────────────────────────────
-I/Contexta.Main:  Starting calendar scan…
-I/Contexta.Main: ───────────────────────────────────────────
-I/MeetingDetector: Found 2 event(s) in window.
-I/MeetingDetector: Event: "Sprint Standup" | Time: 09:00 AM | Type: MEETING
-I/MeetingDetector: Event: "Lunch Break"    | Time: 09:15 AM | Type: NONE
-I/Contexta.Main: ───────────────────────────────────────────
+I/Contexta.Main:  Feature 1: Calendar Meeting Detection
 I/Contexta.Main: ★ Detected MEETING: "Sprint Standup" at 09:00 AM
-I/Contexta.Main:   Event (non-meeting): "Lunch Break" at 09:15 AM
+I/Contexta.Main: 🔔 MEETING detected — triggering system actions…
+I/Contexta.Main: ✔ System actions applied: Silent + DND
 I/Contexta.Main: ───────────────────────────────────────────
-I/Contexta.Main: Primary result JSON: {"event":"MEETING","title":"Sprint Standup","timestamp":1710000000}
-I/Contexta.Main: 🔔 ACTION NEEDED — phone should switch to meeting mode.
+I/Contexta.Main:  Feature 2: Accelerometer Movement Detection
+I/Contexta.Main: 🚶 MOVEMENT detected — variance: 15.302 | mode: walking
+I/Contexta.Main: ───────────────────────────────────────────
+I/Contexta.Main:  Feature 3: WiFi Home Detection
+I/Contexta.Main: 🏠 HOME detected — profile switched to HOME
 ```

@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 /**
  * Mock Accelerometer Bridge — Movement Detection
  *
@@ -29,12 +31,37 @@ let simulationInterval: ReturnType<typeof setInterval> | null = null;
 // ── Public API ───────────────────────────────────────────────
 
 /**
- * Reads the current accelerometer state (mock).
+ * Reads the current accelerometer state.
  *
- * In the real app, this would call the Android native module's
- * MovementDetector.detectOnce() via the React Native bridge.
+ * Tries to call the Android native module's MovementModule.getMovementData().
+ * Falls back to simulation if unavailable or on error.
  */
 export async function getAccelerometerReading(): Promise<MovementData> {
+  try {
+    const nativeModule = NativeModules.MovementModule;
+    if (nativeModule && typeof nativeModule.getMovementData === 'function') {
+      const result = await nativeModule.getMovementData();
+      const parsed = typeof result === 'string' ? JSON.parse(result) : result;
+
+      if (
+        parsed &&
+        typeof parsed === 'object' &&
+        'isMoving' in parsed &&
+        'variance' in parsed &&
+        'transportMode' in parsed
+      ) {
+        console.log('[MovementBridge] Using native accelerometer');
+        return {
+          ...parsed,
+          timestamp: Math.floor(Date.now() / 1000),
+        } as MovementData;
+      }
+    }
+  } catch (error) {
+    console.log('[MovementBridge] Falling back to mock', error);
+  }
+
+  console.log('[MovementBridge] Falling back to mock');
   // Simulate ~100ms sensor read latency
   await new Promise((resolve) => setTimeout(resolve, 100));
 

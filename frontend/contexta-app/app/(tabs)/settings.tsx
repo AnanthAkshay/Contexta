@@ -68,7 +68,7 @@ function ActionBtn({ label, onPress, color, outline }: {
 }
 
 // ─── Glass Section Card ──────────────────────────────────────
-function SectionCard({ children, accentColor }: { children: React.ReactNode; accentColor?: string }) {
+function SectionCard({ children, accentColor }: { children?: React.ReactNode; accentColor?: string }) {
   return (
     <View style={[st.section, accentColor && { borderTopWidth: 2.5, borderTopColor: accentColor }]}>
       <View style={st.sectionInnerGlow} pointerEvents="none" />
@@ -108,6 +108,14 @@ export default function SettingsScreen() {
     if (ssid) {
       setHomeSSIDState(ssid);
       setInputSSID(ssid);
+      
+      // Fire-and-forget: sync to backend
+      fetch('http://10.0.2.2:8080/home/set', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ssid: ssid })
+      }).catch(() => {});
+
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     }

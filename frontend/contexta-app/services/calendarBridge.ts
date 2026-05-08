@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 /**
  * Mock Android Calendar Bridge
  *
@@ -42,6 +44,28 @@ let callCount = 0;
  * feels dynamic. Adds a small artificial delay to mimic bridge latency.
  */
 export async function getCalendarEvent(): Promise<CalendarEvent> {
+  try {
+    const nativeModule = NativeModules.CalendarModule;
+    if (nativeModule && typeof nativeModule.getCurrentCalendarEvent === 'function') {
+      const result = await nativeModule.getCurrentCalendarEvent();
+      const parsed = typeof result === 'string' ? JSON.parse(result) : result;
+
+      if (
+        parsed &&
+        typeof parsed === 'object' &&
+        'event' in parsed &&
+        'title' in parsed &&
+        'timestamp' in parsed
+      ) {
+        console.log('[CalendarBridge] Using native module');
+        return parsed as CalendarEvent;
+      }
+    }
+  } catch (error) {
+    console.log('[CalendarBridge] Falling back to mock', error);
+  }
+
+  console.log('[CalendarBridge] Falling back to mock');
   // Simulate ~250ms native bridge latency
   await new Promise((resolve) => setTimeout(resolve, 250));
 

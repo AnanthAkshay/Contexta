@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 /**
  * Mock WiFi Bridge — Home Detection
  *
@@ -47,12 +49,33 @@ let simulateAtHome = true;
 // ── Public API ───────────────────────────────────────────────
 
 /**
- * Reads the current WiFi state (mock).
+ * Reads the current WiFi state.
  *
- * In the real app, this would call HomeDetector.detect()
- * via the React Native bridge.
+ * Tries to call the Android native module's WifiModule.getCurrentSSID().
+ * Falls back to simulation if unavailable or on error.
  */
 export async function getWiFiState(): Promise<HomeData> {
+  try {
+    const nativeModule = NativeModules.WifiModule;
+    if (nativeModule && typeof nativeModule.getCurrentSSID === 'function') {
+      const currentSSID = await nativeModule.getCurrentSSID();
+      if (typeof currentSSID === 'string') {
+        console.log(`[HomeBridge] Real WiFi SSID: ${currentSSID}`);
+        const isHome = currentSSID === storedHomeSSID;
+        return {
+          isHome,
+          currentSSID,
+          homeSSID: storedHomeSSID,
+          profileMode: isHome ? 'HOME' : 'AWAY',
+          timestamp: Math.floor(Date.now() / 1000),
+        };
+      }
+    }
+  } catch (error) {
+    console.log('[HomeBridge] Falling back to mock', error);
+  }
+
+  console.log('[HomeBridge] Falling back to mock');
   // Simulate ~150ms bridge latency
   await new Promise((resolve) => setTimeout(resolve, 150));
 

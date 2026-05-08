@@ -32,6 +32,8 @@ export interface ContextResult {
 
 // ── Core detection function ──────────────────────────────────
 
+import { syncMeetingContext } from './apiService';
+
 /**
  * Determines the user context from a calendar event.
  *
@@ -71,6 +73,8 @@ export function determineContext(
   console.log(`│ → Reason    : ${result.reason}`);
   console.log(`│ → Action    : ${result.action}`);
   console.log('└──────────────────────────────────────────');
+
+  syncMeetingContext(result).catch(() => {});
 
   return result;
 }

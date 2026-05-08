@@ -1,0 +1,1356 @@
+﻿--- README KEYWORDS ---
+
+--- DOCS KEYWORDS ---
+
+docs\architecture.md:7:│  React Native (Expo)  ←→  Context Logic  ←→  Android 
+Native APIs    │
+docs\architecture.md:18:   Spring Boot Backend — /context, /movement, 
+/home/detect
+docs\architecture.md:25:Calendar API → MeetingDetector → keyword match → 
+MEETING/NONE
+docs\architecture.md:59:## API Endpoints (Spring Boot)
+
+
+
+--- FRONTEND SEARCH ---
+
+frontend\contexta-app\app\(tabs)\explore.tsx:7:import { ThemedText } from 
+'@/components/themed-text';
+frontend\contexta-app\app\(tabs)\explore.tsx:8:import { ThemedView } from 
+'@/components/themed-view';
+frontend\contexta-app\app\(tabs)\explore.tsx:10:import { Fonts } from 
+'@/constants/theme';
+frontend\contexta-app\app\(tabs)\explore.tsx:24:      <ThemedView 
+style={styles.titleContainer}>
+frontend\contexta-app\app\(tabs)\explore.tsx:25:        <ThemedText
+frontend\contexta-app\app\(tabs)\explore.tsx:31:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:32:      </ThemedView>
+frontend\contexta-app\app\(tabs)\explore.tsx:33:      <ThemedText>This app 
+includes example code to help you get started.</ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:35:        <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:37:          <ThemedText 
+type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
+frontend\contexta-app\app\(tabs)\explore.tsx:38:          <ThemedText 
+type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:39:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:40:        <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:41:          The layout file in 
+<ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
+frontend\contexta-app\app\(tabs)\explore.tsx:43:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:45:          <ThemedText 
+type="link">Learn more</ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:49:        <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:51:          <ThemedText 
+type="defaultSemiBold">w</ThemedText> in the terminal running this project.
+frontend\contexta-app\app\(tabs)\explore.tsx:52:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:55:        <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:56:          For static images, 
+you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
+frontend\contexta-app\app\(tabs)\explore.tsx:57:          <ThemedText 
+type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
+frontend\contexta-app\app\(tabs)\explore.tsx:59:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:61:          
+source={require('@/assets/images/react-logo.png')}
+frontend\contexta-app\app\(tabs)\explore.tsx:65:          <ThemedText 
+type="link">Learn more</ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:69:        <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:71:          <ThemedText 
+type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
+frontend\contexta-app\app\(tabs)\explore.tsx:73:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:74:        <ExternalLink 
+href="https://docs.expo.dev/develop/user-interface/color-themes/">
+frontend\contexta-app\app\(tabs)\explore.tsx:75:          <ThemedText 
+type="link">Learn more</ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:79:        <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:81:          <ThemedText 
+type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
+frontend\contexta-app\app\(tabs)\explore.tsx:83:          <ThemedText 
+type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
+frontend\contexta-app\app\(tabs)\explore.tsx:85:          </ThemedText>{' '}
+frontend\contexta-app\app\(tabs)\explore.tsx:87:        </ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:90:            <ThemedText>
+frontend\contexta-app\app\(tabs)\explore.tsx:91:              The <ThemedText 
+type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
+frontend\contexta-app\app\(tabs)\explore.tsx:93:            </ThemedText>
+
+
+
+
+frontend\contexta-app\app\(tabs)\index.tsx:4: * REDESIGNED: Premium 
+Glassmorphism Light Theme
+frontend\contexta-app\app\(tabs)\index.tsx:6: * animated active states, 
+timeline event log, responsive grid.
+frontend\contexta-app\app\(tabs)\index.tsx:7: * ALL original logic preserved 
+100% — only UI/UX upgraded.
+frontend\contexta-app\app\(tabs)\index.tsx:13:  ActivityIndicator, Animated, 
+Platform, Linking, useWindowDimensions,
+frontend\contexta-app\app\(tabs)\index.tsx:16:import { getCalendarEvent, 
+getInjectedMeetingEvent } from '@/services/calendarBridge';
+frontend\contexta-app\app\(tabs)\index.tsx:20:import { getWiFiState, 
+injectHomeState, injectAwayState } from '@/services/homeBridge';
+frontend\contexta-app\app\(tabs)\index.tsx:21:import { determineHomeContext, 
+type HomeContextResult } from '@/services/homeDetector';
+frontend\contexta-app\app\(tabs)\index.tsx:28:  bgHome:       '#F0FFF8',
+frontend\contexta-app\app\(tabs)\index.tsx:57:  meeting:      '#F43F5E',
+frontend\contexta-app\app\(tabs)\index.tsx:58:  meetingDim:   'rgba(244, 63, 
+94, 0.09)',
+frontend\contexta-app\app\(tabs)\index.tsx:59:  meetingGlow:  'rgba(244, 63, 
+94, 0.22)',
+frontend\contexta-app\app\(tabs)\index.tsx:62:  dnd:          '#F59E0B',
+frontend\contexta-app\app\(tabs)\index.tsx:63:  dndDim:       'rgba(245, 158, 
+11, 0.09)',
+frontend\contexta-app\app\(tabs)\index.tsx:65:  home:         '#7C3AED',
+frontend\contexta-app\app\(tabs)\index.tsx:66:  homeDim:      'rgba(124, 58, 
+237, 0.09)',
+frontend\contexta-app\app\(tabs)\index.tsx:67:  homeActive:   '#10B981',
+frontend\contexta-app\app\(tabs)\index.tsx:68:  homeActiveDim:'rgba(16, 185, 
+129, 0.08)',
+frontend\contexta-app\app\(tabs)\index.tsx:69:  homeGlow:     'rgba(16, 185, 
+129, 0.22)',
+frontend\contexta-app\app\(tabs)\index.tsx:80:interface LogEntry {
+frontend\contexta-app\app\(tabs)\index.tsx:89:function logColor(context: 
+string, isOverride: boolean): string {
+frontend\contexta-app\app\(tabs)\index.tsx:91:  if (context === 'MEETING')     
+return C.meeting;
+frontend\contexta-app\app\(tabs)\index.tsx:94:  if (context === 'HOME')        
+return C.homeActive;
+frontend\contexta-app\app\(tabs)\index.tsx:101:function logIcon(context: 
+string, source: string): string {
+frontend\contexta-app\app\(tabs)\index.tsx:102:  if (context === 'MEETING'  || 
+source === 'Calendar')      return '📅';
+frontend\contexta-app\app\(tabs)\index.tsx:105:  if (context === 'HOME'     || 
+source === 'WiFi')           return '🏠';
+frontend\contexta-app\app\(tabs)\index.tsx:218:          ? <ActivityIndicator 
+color={outline ? c : '#fff'} size="small" />
+frontend\contexta-app\app\(tabs)\index.tsx:292:export default function 
+HomeScreen() {
+frontend\contexta-app\app\(tabs)\index.tsx:296:  const [meetingResult,  
+setMeetingResult]  = useState<ContextResult | null>(null);
+frontend\contexta-app\app\(tabs)\index.tsx:298:  const [homeResult,     
+setHomeResult]     = useState<HomeContextResult | null>(null);
+frontend\contexta-app\app\(tabs)\index.tsx:300:  const [logs,           
+setLogs]           = useState<LogEntry[]>([]);
+frontend\contexta-app\app\(tabs)\index.tsx:301:  const [isHomeMode,     
+setIsHomeMode]     = useState(false);
+frontend\contexta-app\app\(tabs)\index.tsx:303:  const logIdRef = useRef(0);
+frontend\contexta-app\app\(tabs)\index.tsx:306:  const logoRot  = useRef(new 
+Animated.Value(0)).current;
+frontend\contexta-app\app\(tabs)\index.tsx:320:      Animated.timing(logoRot, 
+{ toValue: 1, duration: 12000, useNativeDriver: true })
+frontend\contexta-app\app\(tabs)\index.tsx:324:  const makeLog = 
+useCallback((context: string, action: string, isOverride = false, source = 
+'System'): LogEntry => {
+frontend\contexta-app\app\(tabs)\index.tsx:325:    logIdRef.current += 1;
+frontend\contexta-app\app\(tabs)\index.tsx:326:    return { id: 
+logIdRef.current, time: new Date().toLocaleTimeString([], { hour: '2-digit', 
+minute: '2-digit', second: '2-digit' }), context, action, isOverride, source };
+frontend\contexta-app\app\(tabs)\index.tsx:329:  const handleDetectMeeting = 
+useCallback(async () => {
+frontend\contexta-app\app\(tabs)\index.tsx:334:      setMeetingResult(ctx);
+frontend\contexta-app\app\(tabs)\index.tsx:335:      setLogs(p => 
+[makeLog(ctx.context, ctx.action, false, 'Calendar'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:338:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:340:  const handleInjectMeeting = 
+useCallback(() => {
+frontend\contexta-app\app\(tabs)\index.tsx:341:    const event = 
+getInjectedMeetingEvent();
+frontend\contexta-app\app\(tabs)\index.tsx:343:    setMeetingResult(ctx);
+frontend\contexta-app\app\(tabs)\index.tsx:344:    setLogs(p => 
+[makeLog(ctx.context, ctx.action, false, 'Manual'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:345:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:348:    setMeetingResult(prev => 
+prev ? { ...prev, action: 'Normal Mode', reason: 'User override — sound 
+restored' } : prev);
+frontend\contexta-app\app\(tabs)\index.tsx:349:    setLogs(p => 
+[makeLog('OVERRIDE', 'SOUND ON', true, 'User'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:350:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:358:      setLogs(p => 
+[makeLog(ctx.context, ctx.suggestion, false, 'Accelerometer'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:361:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:367:    setLogs(p => 
+[makeLog('WALKING', ctx.suggestion, false, 'Demo'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:368:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:374:    setLogs(p => 
+[makeLog('COMMUTING', ctx.suggestion, false, 'Demo'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:375:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:377:  const handleOpenMaps = 
+useCallback(() => {
+frontend\contexta-app\app\(tabs)\index.tsx:378:    
+Linking.openURL('https://maps.google.com').catch(() => {});
+frontend\contexta-app\app\(tabs)\index.tsx:379:    setLogs(p => 
+[makeLog('ACTION', 'Maps Intent Sent', false, 'CTA'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:380:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:383:    
+Linking.openURL('https://open.spotify.com').catch(() => {
+frontend\contexta-app\app\(tabs)\index.tsx:386:    setLogs(p => 
+[makeLog('ACTION', 'Music Intent Sent', false, 'CTA'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:387:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:389:  const handleDetectHome = 
+useCallback(async () => {
+frontend\contexta-app\app\(tabs)\index.tsx:392:      const data = await 
+getWiFiState();
+frontend\contexta-app\app\(tabs)\index.tsx:393:      const ctx  = 
+determineHomeContext(data);
+frontend\contexta-app\app\(tabs)\index.tsx:394:      setHomeResult(ctx);
+frontend\contexta-app\app\(tabs)\index.tsx:395:      setIsHomeMode(ctx.isHome);
+frontend\contexta-app\app\(tabs)\index.tsx:396:      setLogs(p => 
+[makeLog(ctx.context, `Profile → ${ctx.profile.mode}`, false, 'WiFi'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:399:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:401:  const handleInjectHome = 
+useCallback(() => {
+frontend\contexta-app\app\(tabs)\index.tsx:402:    const data = 
+injectHomeState();
+frontend\contexta-app\app\(tabs)\index.tsx:403:    const ctx  = 
+determineHomeContext(data);
+frontend\contexta-app\app\(tabs)\index.tsx:404:    setHomeResult(ctx);
+frontend\contexta-app\app\(tabs)\index.tsx:405:    setIsHomeMode(true);
+frontend\contexta-app\app\(tabs)\index.tsx:406:    setLogs(p => 
+[makeLog('HOME', 'Profile → HOME', false, 'Demo'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:407:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:411:    const ctx  = 
+determineHomeContext(data);
+frontend\contexta-app\app\(tabs)\index.tsx:412:    setHomeResult(ctx);
+frontend\contexta-app\app\(tabs)\index.tsx:413:    setIsHomeMode(false);
+frontend\contexta-app\app\(tabs)\index.tsx:414:    setLogs(p => 
+[makeLog('AWAY', 'Profile → AWAY', false, 'Demo'), ...p]);
+frontend\contexta-app\app\(tabs)\index.tsx:415:  }, [makeLog]);
+frontend\contexta-app\app\(tabs)\index.tsx:417:  const meetingCtx     = 
+meetingResult?.context ?? null;
+frontend\contexta-app\app\(tabs)\index.tsx:418:  const isDnd          = 
+meetingResult?.action === 'DND Enabled';
+frontend\contexta-app\app\(tabs)\index.tsx:419:  const totalActions   = 
+logs.filter(l => !l.isOverride).length;
+frontend\contexta-app\app\(tabs)\index.tsx:420:  const totalOverrides = 
+logs.filter(l =>  l.isOverride).length;
+frontend\contexta-app\app\(tabs)\index.tsx:422:  const spin = 
+logoRot.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+frontend\contexta-app\app\(tabs)\index.tsx:426:      style={[st.scroll, { 
+backgroundColor: isHomeMode ? C.bgHome : C.bg }]}
+frontend\contexta-app\app\(tabs)\index.tsx:446:          {isHomeMode && 
+<StatusChip label="🏠 HOME"  color={C.homeActive} />}
+frontend\contexta-app\app\(tabs)\index.tsx:447:          {isDnd      && 
+<StatusChip label="🔕 DND"   color={C.dnd} />}
+frontend\contexta-app\app\(tabs)\index.tsx:454:      {/* Home banner */}
+frontend\contexta-app\app\(tabs)\index.tsx:455:      {isHomeMode && (
+frontend\contexta-app\app\(tabs)\index.tsx:456:        <View 
+style={st.homeBanner}>
+frontend\contexta-app\app\(tabs)\index.tsx:457:          <View style={[{ 
+width: 8, height: 8, borderRadius: 4, backgroundColor: C.homeActive }]} />
+frontend\contexta-app\app\(tabs)\index.tsx:458:          <Text 
+style={[st.homeBannerTxt, { color: C.homeActive }]}>Home Mode Active · Profile 
+Applied</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:465:        {/* CARD 1: MEETING */}
+frontend\contexta-app\app\(tabs)\index.tsx:466:        <GCard style={isWide ? 
+st.gridCell : undefined} glow={meetingCtx === 'MEETING' ? C.meeting : 
+undefined} accentColor={meetingCtx === 'MEETING' ? C.meeting : undefined}>
+frontend\contexta-app\app\(tabs)\index.tsx:472:              <Text 
+style={st.cardTitle}>Meeting Detection</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:473:              <Text 
+style={st.cardSubtitle}>Calendar · DND Automation</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:475:            <View 
+style={[st.statusPill, { backgroundColor: isDnd ? C.dndDim : C.emeraldDim, 
+borderColor: (isDnd ? C.dnd : C.emerald) + '40' }]}>
+frontend\contexta-app\app\(tabs)\index.tsx:476:              <PulseDot 
+color={meetingCtx === 'MEETING' ? C.meeting : C.textDim} active={meetingCtx 
+=== 'MEETING'} />
+frontend\contexta-app\app\(tabs)\index.tsx:477:              <Text 
+style={[st.statusPillTxt, { color: isDnd ? C.dnd : C.emerald }]}>{isDnd ? 
+'DND' : 'Normal'}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:481:          <Text 
+style={st.cardReason}>{meetingResult?.reason ?? 'Tap Detect to scan your 
+calendar for active events'}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:482:          {meetingResult && (
+frontend\contexta-app\app\(tabs)\index.tsx:484:              <MetaPill 
+label={`${(meetingResult.confidence * 100).toFixed(0)}% conf`} />
+frontend\contexta-app\app\(tabs)\index.tsx:485:              <MetaPill 
+label={meetingResult.source} />
+frontend\contexta-app\app\(tabs)\index.tsx:486:              <MetaPill 
+label={meetingResult.detectedAt} />
+frontend\contexta-app\app\(tabs)\index.tsx:490:            <Btn label="📅 
+Detect"   onPress={handleDetectMeeting}  color={C.coral}   loading={loading} />
+frontend\contexta-app\app\(tabs)\index.tsx:491:            <Btn label="⚡ 
+Inject"   onPress={handleInjectMeeting}  color={C.amber} />
+frontend\contexta-app\app\(tabs)\index.tsx:492:            <Btn label="🔔 
+Override" onPress={handleOverride} outline color={isDnd ? C.blue : 
+C.textMuted} disabled={!isDnd} />
+frontend\contexta-app\app\(tabs)\index.tsx:526:              <Pressable 
+style={[st.ctaBtn, { backgroundColor: '#2563EB' }]} onPress={handleOpenMaps}>
+frontend\contexta-app\app\(tabs)\index.tsx:527:                <Text 
+style={st.ctaBtnTxt}>🗺️ Open Maps</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:541:        {/* CARD 3: HOME */}
+frontend\contexta-app\app\(tabs)\index.tsx:542:        <GCard style={isWide ? 
+st.gridCell : undefined} glow={isHomeMode ? C.homeActive : undefined} 
+accentColor={isHomeMode ? C.emerald : undefined}>
+frontend\contexta-app\app\(tabs)\index.tsx:548:              <Text 
+style={st.cardTitle}>Home Detection</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:549:              <Text 
+style={st.cardSubtitle}>WiFi SSID · Location Profile</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:551:            <View 
+style={[st.statusPill, { backgroundColor: isHomeMode ? C.homeActiveDim : 
+C.awayDim, borderColor: (isHomeMode ? C.homeActive : C.away) + '40' }]}>
+frontend\contexta-app\app\(tabs)\index.tsx:552:              <PulseDot 
+color={isHomeMode ? C.homeActive : C.away} active={isHomeMode} />
+frontend\contexta-app\app\(tabs)\index.tsx:553:              <Text 
+style={[st.statusPillTxt, { color: isHomeMode ? C.homeActive : C.away 
+}]}>{isHomeMode ? 'Home' : 'Away'}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:557:          <Text 
+style={st.cardReason}>{homeResult?.reason ?? 'Tap Detect to check WiFi SSID 
+and determine location'}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:558:          {homeResult && (
+frontend\contexta-app\app\(tabs)\index.tsx:560:              <MetaPill 
+label={homeResult.currentSSID} />
+frontend\contexta-app\app\(tabs)\index.tsx:561:              <MetaPill 
+label={`${(homeResult.confidence * 100).toFixed(0)}% conf`} />
+frontend\contexta-app\app\(tabs)\index.tsx:562:              <MetaPill 
+label={homeResult.detectedAt} />
+frontend\contexta-app\app\(tabs)\index.tsx:565:          {homeResult && 
+isHomeMode && (
+frontend\contexta-app\app\(tabs)\index.tsx:567:              <ProfileItem 
+icon="🖼" value={homeResult.profile.wallpaperHint} />
+frontend\contexta-app\app\(tabs)\index.tsx:568:              <ProfileItem 
+icon="🔊" value={`Vol: ${homeResult.profile.volumeLevel}`} />
+frontend\contexta-app\app\(tabs)\index.tsx:569:              <ProfileItem 
+icon="🔔" value={homeResult.profile.notificationGrouping} />
+frontend\contexta-app\app\(tabs)\index.tsx:570:              <ProfileItem 
+icon="📡" value={homeResult.profile.bluetoothDevice} />
+frontend\contexta-app\app\(tabs)\index.tsx:574:            <Btn label="📶 
+Detect" onPress={handleDetectHome}   color={C.violet}    loading={loading} />
+frontend\contexta-app\app\(tabs)\index.tsx:575:            <Btn label="🏠 
+Home"   onPress={handleInjectHome}   outline color={C.homeActive} />
+frontend\contexta-app\app\(tabs)\index.tsx:597:      {/* ACTIVITY LOG */}
+frontend\contexta-app\app\(tabs)\index.tsx:598:      {logs.length > 0 && (
+frontend\contexta-app\app\(tabs)\index.tsx:599:        <GCard 
+style={st.logCard}>
+frontend\contexta-app\app\(tabs)\index.tsx:600:          <View 
+style={st.logHead}>
+frontend\contexta-app\app\(tabs)\index.tsx:602:              <View 
+style={[st.logHeadDot, { backgroundColor: C.blue }]} />
+frontend\contexta-app\app\(tabs)\index.tsx:603:              <Text 
+style={st.logHeadTxt}>ACTIVITY LOG</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:606:              <Text 
+style={[st.sChipTxt, { color: C.textSec }]}>{logs.length} events</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:609:          {logs.slice(0, 
+12).map((entry, idx) => {
+frontend\contexta-app\app\(tabs)\index.tsx:610:            const color = 
+logColor(entry.context, entry.isOverride);
+frontend\contexta-app\app\(tabs)\index.tsx:612:              <View 
+key={entry.id} style={[st.logEntry, idx > 0 && st.logEntryBorder]}>
+frontend\contexta-app\app\(tabs)\index.tsx:613:                <View 
+style={[st.logBar, { backgroundColor: color }]} />
+frontend\contexta-app\app\(tabs)\index.tsx:614:                <View 
+style={[st.logIconBox, { backgroundColor: color + '15', borderColor: color + 
+'30' }]}>
+frontend\contexta-app\app\(tabs)\index.tsx:615:                  <Text 
+style={st.logIconTxt}>{logIcon(entry.context, entry.source)}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:617:                <View 
+style={st.logBody}>
+frontend\contexta-app\app\(tabs)\index.tsx:618:                  <View 
+style={st.logTopRow}>
+frontend\contexta-app\app\(tabs)\index.tsx:619:                    <Text 
+style={[st.logCtx, { color }]}>{entry.isOverride ? 'OVERRIDE' : 
+entry.context}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:620:                    <Text 
+style={st.logTime}>{entry.time}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:622:                  <Text 
+style={st.logAction} numberOfLines={1}>{entry.action}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:623:                  <Text 
+style={st.logSrc}>{entry.source}</Text>
+frontend\contexta-app\app\(tabs)\index.tsx:684:  // Home banner
+frontend\contexta-app\app\(tabs)\index.tsx:685:  homeBanner: {
+frontend\contexta-app\app\(tabs)\index.tsx:688:    borderWidth: 1, 
+borderColor: C.homeActive + '35',
+frontend\contexta-app\app\(tabs)\index.tsx:692:      ios: { shadowColor: 
+C.homeActive, shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, 
+height: 4 } },
+frontend\contexta-app\app\(tabs)\index.tsx:696:  homeBannerTxt: { fontSize: 
+13, fontWeight: '700' },
+frontend\contexta-app\app\(tabs)\index.tsx:778:  // Log
+frontend\contexta-app\app\(tabs)\index.tsx:779:  logCard:        { width: 
+'100%', padding: 0, overflow: 'hidden', marginBottom: 18 },
+frontend\contexta-app\app\(tabs)\index.tsx:780:  logHead:        { 
+flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
+paddingHorizontal: 18, paddingVertical: 14, borderBottomWidth: 1, 
+borderBottomColor: 'rgba(200,210,240,0.35)' },
+frontend\contexta-app\app\(tabs)\index.tsx:781:  logHeadDot:     { width: 6, 
+height: 6, borderRadius: 3 },
+frontend\contexta-app\app\(tabs)\index.tsx:782:  logHeadTxt:     { fontSize: 
+10, fontWeight: '900', color: C.textSec, letterSpacing: 2.5, textTransform: 
+'uppercase' },
+frontend\contexta-app\app\(tabs)\index.tsx:783:  logEntry:       { 
+flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, 
+paddingHorizontal: 16 },
+frontend\contexta-app\app\(tabs)\index.tsx:784:  logEntryBorder: { 
+borderTopWidth: 1, borderTopColor: 'rgba(200,210,240,0.35)' },
+frontend\contexta-app\app\(tabs)\index.tsx:785:  logBar:         { width: 3, 
+borderRadius: 2, minHeight: 44, marginRight: 12 },
+frontend\contexta-app\app\(tabs)\index.tsx:786:  logIconBox:     { width: 32, 
+height: 32, borderRadius: 10, borderWidth: 1, alignItems: 'center', 
+justifyContent: 'center', marginRight: 10 },
+frontend\contexta-app\app\(tabs)\index.tsx:787:  logIconTxt:     { fontSize: 
+14 },
+frontend\contexta-app\app\(tabs)\index.tsx:788:  logBody:        { flex: 1 },
+frontend\contexta-app\app\(tabs)\index.tsx:789:  logTopRow:      { 
+flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', 
+marginBottom: 2 },
+frontend\contexta-app\app\(tabs)\index.tsx:790:  logCtx:         { fontSize: 
+11, fontWeight: '900', letterSpacing: 0.6 },
+frontend\contexta-app\app\(tabs)\index.tsx:791:  logTime:        { fontSize: 
+10, color: C.textDim, fontFamily: C.mono },
+frontend\contexta-app\app\(tabs)\index.tsx:792:  logAction:      { fontSize: 
+12, color: C.text, fontWeight: '600', marginBottom: 2 },
+frontend\contexta-app\app\(tabs)\index.tsx:793:  logSrc:         { fontSize: 
+10, color: C.textMuted, fontWeight: '600' },
+
+
+
+
+frontend\contexta-app\app\(tabs)\settings.tsx:4: * REDESIGNED: Premium 
+Glassmorphism Light Theme
+frontend\contexta-app\app\(tabs)\settings.tsx:5: * ALL original logic 
+preserved 100% — only UI/UX upgraded.
+frontend\contexta-app\app\(tabs)\settings.tsx:14:import { getHomeSSID, 
+setHomeSSID, setCurrentAsHome, toggleSimulatedLocation } from 
+'@/services/homeBridge';
+frontend\contexta-app\app\(tabs)\settings.tsx:93:  const [homeSSID,    
+setHomeSSIDState] = useState(getHomeSSID());
+frontend\contexta-app\app\(tabs)\settings.tsx:94:  const [inputSSID,   
+setInputSSID]     = useState(homeSSID);
+frontend\contexta-app\app\(tabs)\settings.tsx:97:  const handleSaveSSID = 
+useCallback(() => {
+frontend\contexta-app\app\(tabs)\settings.tsx:98:    if (inputSSID.trim()) {
+frontend\contexta-app\app\(tabs)\settings.tsx:99:      
+setHomeSSID(inputSSID.trim());
+frontend\contexta-app\app\(tabs)\settings.tsx:100:      
+setHomeSSIDState(inputSSID.trim());
+frontend\contexta-app\app\(tabs)\settings.tsx:104:  }, [inputSSID]);
+frontend\contexta-app\app\(tabs)\settings.tsx:107:    const ssid = 
+setCurrentAsHome();
+frontend\contexta-app\app\(tabs)\settings.tsx:108:    if (ssid) {
+frontend\contexta-app\app\(tabs)\settings.tsx:109:      setHomeSSIDState(ssid);
+frontend\contexta-app\app\(tabs)\settings.tsx:110:      setInputSSID(ssid);
+frontend\contexta-app\app\(tabs)\settings.tsx:117:    const isHome = 
+toggleSimulatedLocation();
+frontend\contexta-app\app\(tabs)\settings.tsx:118:    Alert.alert('Demo 
+Location', `Simulated location set to: ${isHome ? '🏠 HOME' : '🌍 AWAY'}`);
+frontend\contexta-app\app\(tabs)\settings.tsx:144:      {/* ── Home Network 
+─────────────────────────────── */}
+frontend\contexta-app\app\(tabs)\settings.tsx:151:            <Text 
+style={st.sectionTitle}>Home Network</Text>
+frontend\contexta-app\app\(tabs)\settings.tsx:152:            <Text 
+style={st.sectionDesc}>WiFi SSID for Home Mode detection</Text>
+frontend\contexta-app\app\(tabs)\settings.tsx:158:        <Text 
+style={st.fieldLabel}>Home WiFi SSID</Text>
+frontend\contexta-app\app\(tabs)\settings.tsx:161:          value={inputSSID}
+frontend\contexta-app\app\(tabs)\settings.tsx:162:          
+onChangeText={setInputSSID}
+frontend\contexta-app\app\(tabs)\settings.tsx:163:          placeholder="Enter 
+your home network name"
+frontend\contexta-app\app\(tabs)\settings.tsx:170:          <ActionBtn 
+label="💾 Save SSID"        onPress={handleSaveSSID}   color={C.emerald} />
+frontend\contexta-app\app\(tabs)\settings.tsx:171:          <ActionBtn 
+label="📍 Set as Home"       onPress={handleSetCurrent} color={C.blue}    
+outline />
+frontend\contexta-app\app\(tabs)\settings.tsx:177:            <Text 
+style={st.savedText}>SSID saved: <Text style={{ fontWeight: '800' 
+}}>{homeSSID}</Text></Text>
+frontend\contexta-app\app\(tabs)\settings.tsx:182:          <Text 
+style={st.infoLabel}>Current Home SSID</Text>
+frontend\contexta-app\app\(tabs)\settings.tsx:183:          <Text 
+style={[st.infoValue, { color: C.emerald }]}>{homeSSID}</Text>
+frontend\contexta-app\app\(tabs)\settings.tsx:201:        <ActionBtn label="🔄 
+Toggle Home / Away (Demo)" onPress={handleToggleLocation} color={C.cyan} />
+frontend\contexta-app\app\(tabs)\settings.tsx:220:        <ThresholdRow 
+label="Meeting Confidence"  value="0.91"  />
+frontend\contexta-app\app\(tabs)\settings.tsx:221:        <ThresholdRow 
+label="Home Confidence"     value="0.95"  />
+
+
+
+
+frontend\contexta-app\app\(tabs)\_layout.tsx:7:import { Colors } from 
+'@/constants/theme';
+
+
+
+
+frontend\contexta-app\app\modal.tsx:4:import { ThemedText } from 
+'@/components/themed-text';
+frontend\contexta-app\app\modal.tsx:5:import { ThemedView } from 
+'@/components/themed-view';
+frontend\contexta-app\app\modal.tsx:9:    <ThemedView style={styles.container}>
+frontend\contexta-app\app\modal.tsx:10:      <ThemedText type="title">This is 
+a modal</ThemedText>
+frontend\contexta-app\app\modal.tsx:12:        <ThemedText type="link">Go to 
+home screen</ThemedText>
+frontend\contexta-app\app\modal.tsx:14:    </ThemedView>
+
+
+
+
+frontend\contexta-app\app\_layout.tsx:1:import { DefaultTheme, ThemeProvider } 
+from '@react-navigation/native';
+frontend\contexta-app\app\_layout.tsx:12:    <ThemeProvider 
+value={DefaultTheme}>
+frontend\contexta-app\app\_layout.tsx:18:    </ThemeProvider>
+
+
+
+
+frontend\contexta-app\components\ui\collapsible.tsx:4:import { ThemedText } 
+from '@/components/themed-text';
+frontend\contexta-app\components\ui\collapsible.tsx:5:import { ThemedView } 
+from '@/components/themed-view';
+frontend\contexta-app\components\ui\collapsible.tsx:7:import { Colors } from 
+'@/constants/theme';
+frontend\contexta-app\components\ui\collapsible.tsx:12:  const theme = 
+useColorScheme() ?? 'light';
+frontend\contexta-app\components\ui\collapsible.tsx:15:    <ThemedView>
+frontend\contexta-app\components\ui\collapsible.tsx:24:          color={theme 
+=== 'light' ? Colors.light.icon : Colors.dark.icon}
+frontend\contexta-app\components\ui\collapsible.tsx:28:        <ThemedText 
+type="defaultSemiBold">{title}</ThemedText>
+frontend\contexta-app\components\ui\collapsible.tsx:30:      {isOpen && 
+<ThemedView style={styles.content}>{children}</ThemedView>}
+frontend\contexta-app\components\ui\collapsible.tsx:31:    </ThemedView>
+
+
+
+
+
+frontend\contexta-app\components\ui\icon-symbol.tsx:17:  'house.fill': 'home',
+frontend\contexta-app\components\ui\icon-symbol.tsx:21:  'brain.head.profile': 
+'psychology',
+
+
+
+
+
+
+
+frontend\contexta-app\components\parallax-scroll-view.tsx:10:import { 
+ThemedView } from '@/components/themed-view';
+frontend\contexta-app\components\parallax-scroll-view.tsx:12:import { 
+useThemeColor } from '@/hooks/use-theme-color';
+frontend\contexta-app\components\parallax-scroll-view.tsx:26:  const 
+backgroundColor = useThemeColor({}, 'background');
+frontend\contexta-app\components\parallax-scroll-view.tsx:60:      <ThemedView 
+style={styles.content}>{children}</ThemedView>
+
+
+
+
+frontend\contexta-app\components\themed-text.tsx:3:import { useThemeColor } 
+from '@/hooks/use-theme-color';
+frontend\contexta-app\components\themed-text.tsx:5:export type ThemedTextProps 
+= TextProps & {
+frontend\contexta-app\components\themed-text.tsx:11:export function 
+ThemedText({
+frontend\contexta-app\components\themed-text.tsx:17:}: ThemedTextProps) {
+frontend\contexta-app\components\themed-text.tsx:18:  const color = 
+useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+
+
+
+
+frontend\contexta-app\components\themed-view.tsx:3:import { useThemeColor } 
+from '@/hooks/use-theme-color';
+frontend\contexta-app\components\themed-view.tsx:5:export type ThemedViewProps 
+= ViewProps & {
+frontend\contexta-app\components\themed-view.tsx:10:export function 
+ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {
+frontend\contexta-app\components\themed-view.tsx:11:  const backgroundColor = 
+useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+
+
+
+
+
+
+
+frontend\contexta-app\hooks\use-theme-color.ts:6:import { Colors } from 
+'@/constants/theme';
+frontend\contexta-app\hooks\use-theme-color.ts:9:export function useThemeColor(
+frontend\contexta-app\hooks\use-theme-color.ts:13:  const theme = 
+useColorScheme() ?? 'light';
+frontend\contexta-app\hooks\use-theme-color.ts:14:  const colorFromProps = 
+props[theme];
+frontend\contexta-app\hooks\use-theme-color.ts:19:    return 
+Colors[theme][colorName];
+
+
+
+
+frontend\contexta-app\scripts\scripts\reset-project.js:53:      
+console.log(`📁 /${exampleDir} directory created.`);
+frontend\contexta-app\scripts\scripts\reset-project.js:63:          
+console.log(`➡️ /${dir} moved to /${exampleDir}/${dir}.`);
+frontend\contexta-app\scripts\scripts\reset-project.js:66:          
+console.log(`❌ /${dir} deleted.`);
+frontend\contexta-app\scripts\scripts\reset-project.js:69:        
+console.log(`➡️ /${dir} does not exist, skipping.`);
+frontend\contexta-app\scripts\scripts\reset-project.js:76:    
+console.log("\n📁 New /app directory created.");
+frontend\contexta-app\scripts\scripts\reset-project.js:81:    console.log("📄 
+app/index.tsx created.");
+frontend\contexta-app\scripts\scripts\reset-project.js:86:    console.log("📄 
+app/_layout.tsx created.");
+frontend\contexta-app\scripts\scripts\reset-project.js:88:    console.log("\n✅ 
+Project reset complete. Next steps:");
+frontend\contexta-app\scripts\scripts\reset-project.js:89:    console.log(
+frontend\contexta-app\scripts\scripts\reset-project.js:108:      
+console.log("❌ Invalid input. Please enter 'Y' or 'N'.");
+
+
+
+
+frontend\contexta-app\scripts\reset-project.js:53:      console.log(`📁 
+/${exampleDir} directory created.`);
+frontend\contexta-app\scripts\reset-project.js:63:          console.log(`➡️ 
+/${dir} moved to /${exampleDir}/${dir}.`);
+frontend\contexta-app\scripts\reset-project.js:66:          console.log(`❌ 
+/${dir} deleted.`);
+frontend\contexta-app\scripts\reset-project.js:69:        console.log(`➡️ 
+/${dir} does not exist, skipping.`);
+frontend\contexta-app\scripts\reset-project.js:76:    console.log("\n📁 New 
+/app directory created.");
+frontend\contexta-app\scripts\reset-project.js:81:    console.log("📄 
+app/index.tsx created.");
+frontend\contexta-app\scripts\reset-project.js:86:    console.log("📄 
+app/_layout.tsx created.");
+frontend\contexta-app\scripts\reset-project.js:88:    console.log("\n✅ Project 
+reset complete. Next steps:");
+frontend\contexta-app\scripts\reset-project.js:89:    console.log(
+frontend\contexta-app\scripts\reset-project.js:108:      console.log("❌ 
+Invalid input. Please enter 'Y' or 'N'.");
+
+
+
+
+frontend\contexta-app\services\calendarBridge.ts:5: * (MeetingDetector.java) 
+once the React Native bridge is wired up.
+frontend\contexta-app\services\calendarBridge.ts:12:  /** "MEETING" | "NONE" */
+frontend\contexta-app\services\calendarBridge.ts:21:// Demo-optimised: all 
+events are meetings to guarantee reliable
+frontend\contexta-app\services\calendarBridge.ts:23:// real MEETING/NONE 
+classification via keyword matching.
+frontend\contexta-app\services\calendarBridge.ts:26:  { event: 'MEETING', 
+title: 'Sprint Standup',  timestamp: 0 },
+frontend\contexta-app\services\calendarBridge.ts:27:  { event: 'MEETING', 
+title: 'Client Call',     timestamp: 0 },
+frontend\contexta-app\services\calendarBridge.ts:28:  { event: 'MEETING', 
+title: 'Team Meeting',    timestamp: 0 },
+frontend\contexta-app\services\calendarBridge.ts:29:  { event: 'MEETING', 
+title: 'CS101 Class',     timestamp: 0 },
+frontend\contexta-app\services\calendarBridge.ts:30:  { event: 'MEETING', 
+title: 'Design Review',   timestamp: 0 },
+frontend\contexta-app\services\calendarBridge.ts:31:  { event: 'MEETING', 
+title: '1:1 with Manager',timestamp: 0 },
+frontend\contexta-app\services\calendarBridge.ts:41: * Cycles through 
+different meeting titles on each call so the demo
+frontend\contexta-app\services\calendarBridge.ts:58: * Returns a hardcoded 
+MEETING event (used by the "Inject Meeting" demo button).
+frontend\contexta-app\services\calendarBridge.ts:60:export function 
+getInjectedMeetingEvent(): CalendarEvent {
+frontend\contexta-app\services\calendarBridge.ts:62:    event: 'MEETING',
+
+
+
+
+frontend\contexta-app\services\contextDetector.ts:2: * Context Detection Logic 
+Layer
+frontend\contexta-app\services\contextDetector.ts:12:export type ContextType = 
+'MEETING' | 'IDLE';
+frontend\contexta-app\services\contextDetector.ts:14:export type ActionStatus 
+= 'DND Enabled' | 'Normal Mode';
+frontend\contexta-app\services\contextDetector.ts:17:  /** Detected context — 
+"MEETING" or "IDLE" */
+frontend\contexta-app\services\contextDetector.ts:39: *   event == "MEETING"  
+→  context = MEETING, confidence = 0.91, action = DND Enabled
+frontend\contexta-app\services\contextDetector.ts:46:  const isMeeting = 
+eventData.event === 'MEETING';
+frontend\contexta-app\services\contextDetector.ts:49:    context: isMeeting ? 
+'MEETING' : 'IDLE',
+frontend\contexta-app\services\contextDetector.ts:50:    confidence: isMeeting 
+? 0.91 : 0.60,
+frontend\contexta-app\services\contextDetector.ts:52:    eventTitle: isMeeting 
+? eventData.title : '',
+frontend\contexta-app\services\contextDetector.ts:53:    reason: isMeeting
+frontend\contexta-app\services\contextDetector.ts:55:      : 'No active 
+meeting in calendar',
+frontend\contexta-app\services\contextDetector.ts:60:    action: isMeeting ? 
+'DND Enabled' : 'Normal Mode',
+frontend\contexta-app\services\contextDetector.ts:63:  // Debug logging 
+(visible in Metro / Logcat)
+frontend\contexta-app\services\contextDetector.ts:64:  console.log('┌─── 
+Context Detection ───────────────────');
+frontend\contexta-app\services\contextDetector.ts:65:  console.log(`│ Event 
+Title : ${eventData.title}`);
+frontend\contexta-app\services\contextDetector.ts:66:  console.log(`│ Event 
+Type  : ${eventData.event}`);
+frontend\contexta-app\services\contextDetector.ts:67:  console.log(`│ 
+Timestamp   : ${eventData.timestamp}`);
+frontend\contexta-app\services\contextDetector.ts:68:  console.log(`│ → 
+Context   : ${result.context}`);
+frontend\contexta-app\services\contextDetector.ts:69:  console.log(`│ → 
+Confidence: ${result.confidence}`);
+frontend\contexta-app\services\contextDetector.ts:70:  console.log(`│ → Source 
+   : ${result.source}`);
+frontend\contexta-app\services\contextDetector.ts:71:  console.log(`│ → Reason 
+   : ${result.reason}`);
+frontend\contexta-app\services\contextDetector.ts:72:  console.log(`│ → Action 
+   : ${result.action}`);
+frontend\contexta-app\services\contextDetector.ts:73:  
+console.log('└──────────────────────────────────────────');
+
+
+
+
+frontend\contexta-app\services\homeBridge.ts:2: * Mock WiFi Bridge — Home 
+Detection
+frontend\contexta-app\services\homeBridge.ts:5: * (HomeDetector.java) once the 
+React Native bridge is wired up.
+frontend\contexta-app\services\homeBridge.ts:7: * Uses a hardcoded home SSID 
+for demo purposes.
+frontend\contexta-app\services\homeBridge.ts:10:export interface HomeData {
+frontend\contexta-app\services\homeBridge.ts:11:  /** Whether user is 
+currently at home */
+frontend\contexta-app\services\homeBridge.ts:12:  isHome: boolean;
+frontend\contexta-app\services\homeBridge.ts:13:  /** Currently connected WiFi 
+SSID */
+frontend\contexta-app\services\homeBridge.ts:14:  currentSSID: string;
+frontend\contexta-app\services\homeBridge.ts:15:  /** Stored home WiFi SSID */
+frontend\contexta-app\services\homeBridge.ts:16:  homeSSID: string;
+frontend\contexta-app\services\homeBridge.ts:18:  profileMode: 'HOME' | 'AWAY';
+frontend\contexta-app\services\homeBridge.ts:23:export interface HomeProfile {
+frontend\contexta-app\services\homeBridge.ts:25:  mode: 'HOME' | 'AWAY';
+frontend\contexta-app\services\homeBridge.ts:38:/** Hardcoded home SSID for 
+demo — matches Android default */
+frontend\contexta-app\services\homeBridge.ts:39:let storedHomeSSID = 
+'MyHomeWiFi';
+frontend\contexta-app\services\homeBridge.ts:41:/** Simulated current SSID — 
+starts as home for demo */
+frontend\contexta-app\services\homeBridge.ts:42:let simulatedCurrentSSID = 
+'MyHomeWiFi';
+frontend\contexta-app\services\homeBridge.ts:44:/** Whether to simulate being 
+at home */
+frontend\contexta-app\services\homeBridge.ts:45:let simulateAtHome = true;
+frontend\contexta-app\services\homeBridge.ts:50: * Reads the current WiFi 
+state (mock).
+frontend\contexta-app\services\homeBridge.ts:52: * In the real app, this would 
+call HomeDetector.detect()
+frontend\contexta-app\services\homeBridge.ts:55:export async function 
+getWiFiState(): Promise<HomeData> {
+frontend\contexta-app\services\homeBridge.ts:59:  const currentSSID = 
+simulateAtHome ? storedHomeSSID : 'OfficeWiFi_5G';
+frontend\contexta-app\services\homeBridge.ts:60:  const isHome = currentSSID 
+=== storedHomeSSID;
+frontend\contexta-app\services\homeBridge.ts:63:    isHome,
+frontend\contexta-app\services\homeBridge.ts:64:    currentSSID,
+frontend\contexta-app\services\homeBridge.ts:65:    homeSSID: storedHomeSSID,
+frontend\contexta-app\services\homeBridge.ts:66:    profileMode: isHome ? 
+'HOME' : 'AWAY',
+frontend\contexta-app\services\homeBridge.ts:72: * Gets the home profile 
+settings for the current state.
+frontend\contexta-app\services\homeBridge.ts:74:export function 
+getHomeProfile(isHome: boolean): HomeProfile {
+frontend\contexta-app\services\homeBridge.ts:75:  if (isHome) {
+frontend\contexta-app\services\homeBridge.ts:77:      mode: 'HOME',
+frontend\contexta-app\services\homeBridge.ts:95: * Simulates saving the 
+current WiFi as home.
+frontend\contexta-app\services\homeBridge.ts:96: * (In the real app, calls 
+HomeDetector.setCurrentAsHome())
+frontend\contexta-app\services\homeBridge.ts:98: * @returns the saved SSID
+frontend\contexta-app\services\homeBridge.ts:100:export function 
+setCurrentAsHome(): string {
+frontend\contexta-app\services\homeBridge.ts:101:  storedHomeSSID = 
+simulatedCurrentSSID;
+frontend\contexta-app\services\homeBridge.ts:102:  console.log(`[HomeBridge] 
+Home SSID saved: ${storedHomeSSID}`);
+frontend\contexta-app\services\homeBridge.ts:103:  return storedHomeSSID;
+frontend\contexta-app\services\homeBridge.ts:107: * Manually set the home SSID.
+frontend\contexta-app\services\homeBridge.ts:109:export function 
+setHomeSSID(ssid: string): void {
+frontend\contexta-app\services\homeBridge.ts:110:  storedHomeSSID = ssid;
+frontend\contexta-app\services\homeBridge.ts:111:  console.log(`[HomeBridge] 
+Home SSID manually set: ${ssid}`);
+frontend\contexta-app\services\homeBridge.ts:115: * Get the stored home SSID.
+frontend\contexta-app\services\homeBridge.ts:117:export function 
+getHomeSSID(): string {
+frontend\contexta-app\services\homeBridge.ts:118:  return storedHomeSSID;
+frontend\contexta-app\services\homeBridge.ts:122: * Toggle simulated location 
+(home vs away) for demo.
+frontend\contexta-app\services\homeBridge.ts:125:  simulateAtHome = 
+!simulateAtHome;
+frontend\contexta-app\services\homeBridge.ts:126:  simulatedCurrentSSID = 
+simulateAtHome ? storedHomeSSID : 'OfficeWiFi_5G';
+frontend\contexta-app\services\homeBridge.ts:127:  console.log(`[HomeBridge] 
+Simulated location: ${simulateAtHome ? 'HOME' : 'AWAY'}`);
+frontend\contexta-app\services\homeBridge.ts:128:  return simulateAtHome;
+frontend\contexta-app\services\homeBridge.ts:132: * Injects "at home" state 
+for demo.
+frontend\contexta-app\services\homeBridge.ts:134:export function 
+injectHomeState(): HomeData {
+frontend\contexta-app\services\homeBridge.ts:136:    isHome: true,
+frontend\contexta-app\services\homeBridge.ts:137:    currentSSID: 
+storedHomeSSID,
+frontend\contexta-app\services\homeBridge.ts:138:    homeSSID: storedHomeSSID,
+frontend\contexta-app\services\homeBridge.ts:139:    profileMode: 'HOME',
+frontend\contexta-app\services\homeBridge.ts:147:export function 
+injectAwayState(): HomeData {
+frontend\contexta-app\services\homeBridge.ts:149:    isHome: false,
+frontend\contexta-app\services\homeBridge.ts:150:    currentSSID: 
+'OfficeWiFi_5G',
+frontend\contexta-app\services\homeBridge.ts:151:    homeSSID: storedHomeSSID,
+
+
+
+
+frontend\contexta-app\services\homeDetector.ts:2: * Home Context Detection 
+Logic
+frontend\contexta-app\services\homeDetector.ts:4: * Takes WiFi data from the 
+home bridge and produces a structured
+frontend\contexta-app\services\homeDetector.ts:8: *   SSID matches home  →  
+HOME mode, confidence 0.95
+frontend\contexta-app\services\homeDetector.ts:9: *   SSID doesn't match →  
+AWAY mode, confidence 0.90
+frontend\contexta-app\services\homeDetector.ts:12:import type { HomeData, 
+HomeProfile } from './homeBridge';
+frontend\contexta-app\services\homeDetector.ts:13:import { getHomeProfile } 
+from './homeBridge';
+frontend\contexta-app\services\homeDetector.ts:17:export type HomeContextType 
+= 'HOME' | 'AWAY';
+frontend\contexta-app\services\homeDetector.ts:19:export interface 
+HomeContextResult {
+frontend\contexta-app\services\homeDetector.ts:20:  /** Detected home context 
+*/
+frontend\contexta-app\services\homeDetector.ts:21:  context: HomeContextType;
+frontend\contexta-app\services\homeDetector.ts:22:  /** Whether user is at 
+home */
+frontend\contexta-app\services\homeDetector.ts:23:  isHome: boolean;
+frontend\contexta-app\services\homeDetector.ts:24:  /** Current WiFi SSID */
+frontend\contexta-app\services\homeDetector.ts:25:  currentSSID: string;
+frontend\contexta-app\services\homeDetector.ts:26:  /** Stored home WiFi SSID 
+*/
+frontend\contexta-app\services\homeDetector.ts:27:  homeSSID: string;
+frontend\contexta-app\services\homeDetector.ts:33:  profile: HomeProfile;
+frontend\contexta-app\services\homeDetector.ts:41: * Determines home context 
+from WiFi data.
+frontend\contexta-app\services\homeDetector.ts:43:export function 
+determineHomeContext(data: HomeData): HomeContextResult {
+frontend\contexta-app\services\homeDetector.ts:44:  const isHome = data.isHome;
+frontend\contexta-app\services\homeDetector.ts:45:  const context: 
+HomeContextType = isHome ? 'HOME' : 'AWAY';
+frontend\contexta-app\services\homeDetector.ts:46:  const confidence = isHome 
+? 0.95 : 0.90;
+frontend\contexta-app\services\homeDetector.ts:47:  const profile = 
+getHomeProfile(isHome);
+frontend\contexta-app\services\homeDetector.ts:49:  const reason = isHome
+frontend\contexta-app\services\homeDetector.ts:50:    ? `WiFi SSID 
+"${data.currentSSID}" matches home network`
+frontend\contexta-app\services\homeDetector.ts:51:    : `WiFi SSID 
+"${data.currentSSID}" ≠ home network "${data.homeSSID}"`;
+frontend\contexta-app\services\homeDetector.ts:53:  const result: 
+HomeContextResult = {
+frontend\contexta-app\services\homeDetector.ts:55:    isHome,
+frontend\contexta-app\services\homeDetector.ts:56:    currentSSID: 
+data.currentSSID,
+frontend\contexta-app\services\homeDetector.ts:57:    homeSSID: data.homeSSID,
+frontend\contexta-app\services\homeDetector.ts:67:  // Debug logging
+frontend\contexta-app\services\homeDetector.ts:68:  console.log('┌─── Home 
+Detection ──────────────────────');
+frontend\contexta-app\services\homeDetector.ts:69:  console.log(`│ Current 
+SSID : ${data.currentSSID}`);
+frontend\contexta-app\services\homeDetector.ts:70:  console.log(`│ Home SSID   
+ : ${data.homeSSID}`);
+frontend\contexta-app\services\homeDetector.ts:71:  console.log(`│ Is Home     
+ : ${isHome}`);
+frontend\contexta-app\services\homeDetector.ts:72:  console.log(`│ → Context   
+ : ${result.context}`);
+frontend\contexta-app\services\homeDetector.ts:73:  console.log(`│ → 
+Confidence : ${result.confidence}`);
+frontend\contexta-app\services\homeDetector.ts:74:  console.log(`│ → Profile   
+ : ${result.profile.mode}`);
+frontend\contexta-app\services\homeDetector.ts:75:  console.log(`│ → Wallpaper 
+ : ${result.profile.wallpaperHint}`);
+frontend\contexta-app\services\homeDetector.ts:76:  console.log(`│ → Volume    
+ : ${result.profile.volumeLevel}`);
+frontend\contexta-app\services\homeDetector.ts:77:  console.log(`│ → Notif.    
+ : ${result.profile.notificationGrouping}`);
+frontend\contexta-app\services\homeDetector.ts:78:  
+console.log('└──────────────────────────────────────────');
+
+
+
+
+
+frontend\contexta-app\services\movementDetector.ts:2: * Movement Context 
+Detection Logic
+frontend\contexta-app\services\movementDetector.ts:58:    suggestion = 'Open 
+Maps for navigation';
+frontend\contexta-app\services\movementDetector.ts:89:  // Debug logging
+frontend\contexta-app\services\movementDetector.ts:90:  console.log('┌─── 
+Movement Detection ──────────────────');
+frontend\contexta-app\services\movementDetector.ts:91:  console.log(`│ 
+Variance     : ${data.variance.toFixed(3)}`);
+frontend\contexta-app\services\movementDetector.ts:92:  console.log(`│ Is 
+Moving    : ${data.isMoving}`);
+frontend\contexta-app\services\movementDetector.ts:93:  console.log(`│ 
+Transport    : ${data.transportMode}`);
+frontend\contexta-app\services\movementDetector.ts:94:  console.log(`│ → 
+Context    : ${result.context}`);
+frontend\contexta-app\services\movementDetector.ts:95:  console.log(`│ → 
+Confidence : ${result.confidence}`);
+frontend\contexta-app\services\movementDetector.ts:96:  console.log(`│ → 
+Suggestion : ${result.suggestion}`);
+frontend\contexta-app\services\movementDetector.ts:97:  console.log(`│ → ETA   
+     : ${result.eta}`);
+frontend\contexta-app\services\movementDetector.ts:98:  
+console.log('└──────────────────────────────────────────');
+
+
+
+
+frontend\contexta-app\App.js:4: * REDESIGNED: Futuristic AI Dashboard — 
+glassmorphism theme,
+frontend\contexta-app\App.js:5: * animated active states, timeline event log, 
+responsive grid.
+frontend\contexta-app\App.js:8: * ALL original logic preserved 100% — only 
+UI/UX upgraded.
+frontend\contexta-app\App.js:11: *   1. Calendar-based Meeting Detection (Day 
+2)
+frontend\contexta-app\App.js:13: *   3. WiFi Home Detection (Day 3)
+frontend\contexta-app\App.js:19:  ActivityIndicator, Animated, Platform, 
+Linking, useWindowDimensions,
+frontend\contexta-app\App.js:28:  bgHome:       '#F2FFF8',
+frontend\contexta-app\App.js:35:  meeting:      '#F43F5E',
+frontend\contexta-app\App.js:36:  meetingDim:   'rgba(244, 63, 94, 0.10)',
+frontend\contexta-app\App.js:39:  dnd:          '#F59E0B',
+frontend\contexta-app\App.js:40:  dndDim:       'rgba(245, 158, 11, 0.10)',
+frontend\contexta-app\App.js:46:  home:         '#7C3AED',
+frontend\contexta-app\App.js:47:  homeDim:      'rgba(124, 58, 237, 0.10)',
+frontend\contexta-app\App.js:48:  homeActive:   '#10B981',
+frontend\contexta-app\App.js:49:  homeActiveDim:'rgba(16, 185, 129, 0.08)',
+frontend\contexta-app\App.js:60:// INLINE MOCKS  (unchanged logic)
+frontend\contexta-app\App.js:63:  { event: 'MEETING', title: 'Sprint Standup' 
+},
+frontend\contexta-app\App.js:64:  { event: 'MEETING', title: 'Client Call' },
+frontend\contexta-app\App.js:65:  { event: 'MEETING', title: 'Team Meeting' },
+frontend\contexta-app\App.js:83:function getWiFiState(isHome) {
+frontend\contexta-app\App.js:84:  const homeSSID = 'MyHomeWiFi';
+frontend\contexta-app\App.js:86:    isHome,
+frontend\contexta-app\App.js:87:    currentSSID: isHome ? homeSSID : 
+'OfficeWiFi_5G',
+frontend\contexta-app\App.js:88:    homeSSID,
+frontend\contexta-app\App.js:89:    profileMode: isHome ? 'HOME' : 'AWAY',
+frontend\contexta-app\App.js:96:function logColor(context, isOverride) {
+frontend\contexta-app\App.js:98:  if (context === 'MEETING') return C.meeting;
+frontend\contexta-app\App.js:101:  if (context === 'HOME') return C.homeActive;
+frontend\contexta-app\App.js:108:function logIcon(context, source) {
+frontend\contexta-app\App.js:109:  if (context === 'MEETING' || source === 
+'Calendar') return '📅';
+frontend\contexta-app\App.js:112:  if (context === 'HOME' || source === 
+'WiFi') return '🏠';
+frontend\contexta-app\App.js:191:          ? <ActivityIndicator color="#fff" 
+size="small" />
+frontend\contexta-app\App.js:241:  const [meetingCtx, setMeetingCtx] = 
+useState(null);
+frontend\contexta-app\App.js:243:  const [homeCtx, setHomeCtx] = 
+useState(null);
+frontend\contexta-app\App.js:245:  const [logs, setLogs] = useState([]);
+frontend\contexta-app\App.js:246:  const [isHomeMode, setIsHomeMode] = 
+useState(false);
+frontend\contexta-app\App.js:248:  const logIdRef = useRef(0);
+frontend\contexta-app\App.js:249:  const logoGlow = useRef(new 
+Animated.Value(0.5)).current;
+frontend\contexta-app\App.js:254:        Animated.timing(logoGlow, { toValue: 
+1, duration: 2200, useNativeDriver: true }),
+frontend\contexta-app\App.js:255:        Animated.timing(logoGlow, { toValue: 
+0.35, duration: 2200, useNativeDriver: true }),
+frontend\contexta-app\App.js:260:  const addLog = useCallback((ctx, action, 
+src = 'System') => {
+frontend\contexta-app\App.js:261:    logIdRef.current += 1;
+frontend\contexta-app\App.js:262:    setLogs(p => [{
+frontend\contexta-app\App.js:263:      id: logIdRef.current,
+frontend\contexta-app\App.js:269:  // ── Meeting 
+──────────────────────────────────────────────
+frontend\contexta-app\App.js:270:  const handleMeeting = useCallback(async () 
+=> {
+frontend\contexta-app\App.js:273:    const m = e.event === 'MEETING';
+frontend\contexta-app\App.js:275:      context: m ? 'MEETING' : 'IDLE',
+frontend\contexta-app\App.js:277:      action: m ? 'DND Enabled' : 'Normal 
+Mode',
+frontend\contexta-app\App.js:278:      reason: m ? `Calendar: "${e.title}"` : 
+'No meeting',
+frontend\contexta-app\App.js:282:    setMeetingCtx(r);
+frontend\contexta-app\App.js:283:    addLog(r.context, r.action, 'Calendar');
+frontend\contexta-app\App.js:285:  }, [addLog]);
+frontend\contexta-app\App.js:295:      suggestion: d.isMoving ? 'Open Maps or 
+Music' : 'No action',
+frontend\contexta-app\App.js:300:    addLog(ctx, r.suggestion, 
+'Accelerometer');
+frontend\contexta-app\App.js:301:  }, [addLog]);
+frontend\contexta-app\App.js:303:  // ── Home 
+─────────────────────────────────────────────────
+frontend\contexta-app\App.js:304:  const handleHome = useCallback((forceHome) 
+=> {
+frontend\contexta-app\App.js:305:    const d = getWiFiState(forceHome !== 
+undefined ? forceHome : !isHomeMode);
+frontend\contexta-app\App.js:307:      context: d.profileMode, isHome: 
+d.isHome,
+frontend\contexta-app\App.js:308:      currentSSID: d.currentSSID, homeSSID: 
+d.homeSSID,
+frontend\contexta-app\App.js:310:      reason: d.isHome
+frontend\contexta-app\App.js:311:        ? `SSID "${d.currentSSID}" matches 
+home`
+frontend\contexta-app\App.js:312:        : `SSID "${d.currentSSID}" ≠ home`,
+frontend\contexta-app\App.js:314:      wallpaper: d.isHome ? 'personal' : 
+'default',
+frontend\contexta-app\App.js:315:      volume: d.isHome ? '60%' : 'vibrate',
+frontend\contexta-app\App.js:317:    setHomeCtx(r);
+frontend\contexta-app\App.js:318:    setIsHomeMode(d.isHome);
+frontend\contexta-app\App.js:319:    addLog(d.profileMode, `Profile → 
+${d.profileMode}`, 'WiFi');
+frontend\contexta-app\App.js:320:  }, [isHomeMode, addLog]);
+frontend\contexta-app\App.js:322:  const isDnd = meetingCtx?.action === 'DND 
+Enabled';
+frontend\contexta-app\App.js:323:  const totalActions = logs.length;
+frontend\contexta-app\App.js:327:      style={[st.scroll, { backgroundColor: 
+isHomeMode ? C.bgHome : C.bg }]}
+frontend\contexta-app\App.js:336:        <View style={st.logoWrap}>
+frontend\contexta-app\App.js:337:          <Animated.View style={[st.logoHalo, 
+{ opacity: logoGlow }]} />
+frontend\contexta-app\App.js:338:          <Text style={st.logoGlyph}>◉</Text>
+frontend\contexta-app\App.js:344:          {isHomeMode && <StatusChip 
+label="🏠 HOME" color={C.homeActive} />}
+frontend\contexta-app\App.js:345:          {isDnd && <StatusChip label="🔕 
+DND" color={C.dnd} />}
+frontend\contexta-app\App.js:355:      {isHomeMode && (
+frontend\contexta-app\App.js:356:        <View style={st.homeBanner}>
+frontend\contexta-app\App.js:357:          <View style={[st.homeBannerDot, { 
+backgroundColor: C.homeActive }]} />
+frontend\contexta-app\App.js:358:          <Text style={st.homeBannerTxt}>Home 
+Mode Active · Profile Applied</Text>
+frontend\contexta-app\App.js:365:        {/* CARD 1: Meeting */}
+frontend\contexta-app\App.js:366:        <GCard style={isWide ? st.gridCell : 
+undefined} glow={meetingCtx?.context === 'MEETING' ? C.meeting : undefined}>
+frontend\contexta-app\App.js:368:            <PulseDot 
+color={meetingCtx?.context === 'MEETING' ? C.meeting : C.textMuted} 
+active={meetingCtx?.context === 'MEETING'} />
+frontend\contexta-app\App.js:369:            <Text 
+style={st.cardTitle}>Meeting Detection</Text>
+frontend\contexta-app\App.js:370:            <View style={[st.badge, { 
+backgroundColor: isDnd ? C.dndDim : C.idleDim }]}>
+frontend\contexta-app\App.js:371:              <Text style={[st.badgeTxt, { 
+color: isDnd ? C.dnd : C.idle }]}>
+frontend\contexta-app\App.js:372:                {isDnd ? '🔕 DND' : '🔔 
+Normal'}
+frontend\contexta-app\App.js:376:          <Text 
+style={st.cardReason}>{meetingCtx?.reason ?? 'Tap Detect to scan 
+calendar'}</Text>
+frontend\contexta-app\App.js:377:          {meetingCtx && (
+frontend\contexta-app\App.js:379:              <MetaPill 
+label={`${(meetingCtx.confidence * 100).toFixed(0)}% conf`} />
+frontend\contexta-app\App.js:380:              <MetaPill 
+label={meetingCtx.source} />
+frontend\contexta-app\App.js:381:              <MetaPill 
+label={meetingCtx.detectedAt} />
+frontend\contexta-app\App.js:385:            <Btn label="📅 Detect" 
+onPress={handleMeeting} bg={C.accent} loading={loading} />
+frontend\contexta-app\App.js:415:              <Pressable style={[st.ctaBtn, { 
+backgroundColor: '#1A73E8' }]} onPress={() => 
+Linking.openURL('https://maps.google.com').catch(() => { })}>
+frontend\contexta-app\App.js:416:                <Text 
+style={st.ctaBtnTxt}>🗺️ Maps</Text>
+frontend\contexta-app\App.js:418:              <Pressable style={[st.ctaBtn, { 
+backgroundColor: '#1DB954' }]} onPress={() => 
+Linking.openURL('https://open.spotify.com').catch(() => { })}>
+frontend\contexta-app\App.js:428:        {/* CARD 3: Home */}
+frontend\contexta-app\App.js:429:        <GCard style={isWide ? st.gridCell : 
+undefined} glow={isHomeMode ? C.homeActive : undefined}>
+frontend\contexta-app\App.js:431:            <PulseDot color={isHomeMode ? 
+C.homeActive : C.away} active={isHomeMode} />
+frontend\contexta-app\App.js:432:            <Text style={st.cardTitle}>Home 
+Detection</Text>
+frontend\contexta-app\App.js:433:            <View style={[st.badge, { 
+backgroundColor: isHomeMode ? C.homeActiveDim : C.awayDim }]}>
+frontend\contexta-app\App.js:434:              <Text style={[st.badgeTxt, { 
+color: isHomeMode ? C.homeActive : C.away }]}>
+frontend\contexta-app\App.js:435:                {isHomeMode ? '🏠 HOME' : '🌍 
+AWAY'}
+frontend\contexta-app\App.js:439:          <Text 
+style={st.cardReason}>{homeCtx?.reason ?? 'Tap Detect to check WiFi'}</Text>
+frontend\contexta-app\App.js:440:          {homeCtx && (
+frontend\contexta-app\App.js:442:              <MetaPill 
+label={homeCtx.currentSSID} />
+frontend\contexta-app\App.js:443:              <MetaPill 
+label={`${(homeCtx.confidence * 100).toFixed(0)}% conf`} />
+frontend\contexta-app\App.js:447:            <Btn label="📶 Detect" 
+onPress={() => handleHome(undefined)} bg={C.home} />
+frontend\contexta-app\App.js:448:            <Btn label="🏠 Home" onPress={() 
+=> handleHome(true)} outline fg={C.homeActive} />
+frontend\contexta-app\App.js:449:            <Btn label="🌍 Away" onPress={() 
+=> handleHome(false)} outline fg={C.away} />
+frontend\contexta-app\App.js:458:        <StatBox label="HOME" 
+value={isHomeMode ? 'ON' : 'OFF'} color={C.homeActive} icon="🏠" />
+frontend\contexta-app\App.js:459:        <StatBox label="DND" value={isDnd ? 
+'ON' : 'OFF'} color={C.dnd} icon="🔕" />
+frontend\contexta-app\App.js:470:      {/* ─── ACTIVITY LOG 
+──────────────────────────────────── */}
+frontend\contexta-app\App.js:471:      {logs.length > 0 && (
+frontend\contexta-app\App.js:472:        <GCard style={[st.logCard, { width: 
+'100%' }]}>
+frontend\contexta-app\App.js:473:          <View style={st.logHead}>
+frontend\contexta-app\App.js:474:            <Text 
+style={st.logHeadTxt}>ACTIVITY LOG</Text>
+frontend\contexta-app\App.js:476:              <Text style={[st.badgeTxt, { 
+color: C.textSec }]}>{logs.length} events</Text>
+frontend\contexta-app\App.js:480:          {logs.slice(0, 10).map((entry, idx) 
+=> {
+frontend\contexta-app\App.js:481:            const color = 
+logColor(entry.context, entry.isOverride);
+frontend\contexta-app\App.js:483:              <View key={entry.id} 
+style={[st.logEntry, idx > 0 && st.logEntryBorder]}>
+frontend\contexta-app\App.js:484:                <View style={[st.logBar, { 
+backgroundColor: color }]} />
+frontend\contexta-app\App.js:485:                <View style={st.logIconBox}>
+frontend\contexta-app\App.js:486:                  <Text 
+style={st.logIconTxt}>{logIcon(entry.context, entry.source)}</Text>
+frontend\contexta-app\App.js:488:                <View style={st.logBody}>
+frontend\contexta-app\App.js:489:                  <View style={st.logTopRow}>
+frontend\contexta-app\App.js:490:                    <Text style={[st.logCtx, 
+{ color }]}>{entry.context}</Text>
+frontend\contexta-app\App.js:491:                    <Text 
+style={st.logTime}>{entry.time}</Text>
+frontend\contexta-app\App.js:493:                  <Text style={st.logAction} 
+numberOfLines={1}>{entry.action}</Text>
+frontend\contexta-app\App.js:494:                  <Text 
+style={st.logSrc}>{entry.source}</Text>
+frontend\contexta-app\App.js:521:  logoWrap: { width: 68, height: 68, 
+alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
+frontend\contexta-app\App.js:522:  logoHalo: { position: 'absolute', width: 
+80, height: 80, borderRadius: 40, backgroundColor: C.accentGlow },
+frontend\contexta-app\App.js:523:  logoGlyph: { fontSize: 40, color: C.accent, 
+lineHeight: 44 },
+frontend\contexta-app\App.js:530:  homeBanner: {
+frontend\contexta-app\App.js:541:  homeBannerDot: { width: 8, height: 8, 
+borderRadius: 4 },
+frontend\contexta-app\App.js:542:  homeBannerTxt: { fontSize: 13, fontWeight: 
+'700', color: C.homeActive },
+frontend\contexta-app\App.js:590:  logCard: { padding: 0, overflow: 'hidden', 
+marginBottom: 16 },
+frontend\contexta-app\App.js:591:  logHead: { flexDirection: 'row', 
+alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, 
+paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: C.border },
+frontend\contexta-app\App.js:592:  logHeadTxt: { fontSize: 10, fontWeight: 
+'900', color: C.textSec, letterSpacing: 2.5 },
+frontend\contexta-app\App.js:593:  logEntry: { flexDirection: 'row', 
+alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 16 },
+frontend\contexta-app\App.js:594:  logEntryBorder: { borderTopWidth: 1, 
+borderTopColor: 'rgba(200,210,240,0.35)' },
+frontend\contexta-app\App.js:595:  logBar: { width: 3, borderRadius: 2, 
+minHeight: 44, marginRight: 12 },
+frontend\contexta-app\App.js:596:  logIconBox: { width: 32, height: 32, 
+borderRadius: 10, backgroundColor: 'rgba(100,116,139,0.08)', borderWidth: 1, 
+borderColor: 'rgba(100,116,139,0.15)', alignItems: 'center', justifyContent: 
+'center', marginRight: 10 },
+frontend\contexta-app\App.js:597:  logIconTxt: { fontSize: 14 },
+frontend\contexta-app\App.js:598:  logBody: { flex: 1 },
+frontend\contexta-app\App.js:599:  logTopRow: { flexDirection: 'row', 
+justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
+frontend\contexta-app\App.js:600:  logCtx: { fontSize: 11, fontWeight: '900', 
+letterSpacing: 0.6 },
+frontend\contexta-app\App.js:601:  logTime: { fontSize: 10, color: C.textDim, 
+fontFamily: C.mono },
+frontend\contexta-app\App.js:602:  logAction: { fontSize: 12, color: C.text, 
+fontWeight: '600', marginBottom: 2 },
+frontend\contexta-app\App.js:603:  logSrc: { fontSize: 10, color: C.textMuted, 
+fontWeight: '600' },
+
+
+
+
+--- BACKEND SEARCH ---
+
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:1:package com.contexta.controller;
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:4:import org.springframework.web.bind.annotation.RestController;
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:6:@RestController
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:7:public class ContextController {
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:9:    @PostMapping("/context")
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:10:    public ContextResponse getContext() {
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:11:        return new ContextResponse("MEETING", 0.91);
+backend\contexta-backend\src\main\java\com\contexta\controller\ContextControlle
+r.java:14:    public record ContextResponse(String context, double confidence) 
+{}
+
+
+
+
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:1:package com.contexta.controller;
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:3:import com.contexta.model.HomeEvent;
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:9: * REST endpoint for home detection.
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:11: * POST /home/detect — receives WiFi SSID from Android client,
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:12: * returns a home profile with settings to apply.
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:14:@RestController
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:15:@RequestMapping("/home")
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:16:public class HomeController {
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:18:    /** Hardcoded home SSID for MVP — matches the Android default */
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:19:    private static final String HOME_SSID = "MyHomeWiFi";
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:22:     * Detects if the user is at home based on their WiFi SSID
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:25:     * @param event the home detection event from the device
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:26:     * @return home profile with settings
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:29:    public HomeResponse detectHome(@RequestBody HomeEvent event) {
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:30:        boolean isHome = 
+HOME_SSID.equalsIgnoreCase(event.currentSSID());
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:32:        String profileMode = isHome ? "HOME" : "AWAY";
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:33:        String wallpaperHint = isHome ? "personal_wallpaper" : 
+"default_wallpaper";
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:34:        String volumeLevel = isHome ? "60%" : "vibrate";
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:35:        String notificationGrouping = isHome ? "personal" : "work";
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:37:        return new HomeResponse(
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:38:                isHome,
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:41:                HOME_SSID,
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:50:     * GET /home/status — health check for home service.
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:55:                "service", "home-detection",
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:57:                "homeSSID", HOME_SSID,
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:63:     * POST /home/set — allows the client to update the home SSID.
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:67:    public Map<String, Object> setHomeSSID(@RequestBody Map<String, 
+String> body) {
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:71:                "homeSSID", newSSID.isEmpty() ? HOME_SSID : newSSID,
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:74:                        : "Home SSID updated to: " + newSSID
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:78:    public record HomeResponse(
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:79:            boolean isHome,
+backend\contexta-backend\src\main\java\com\contexta\controller\HomeController.j
+ava:82:            String homeSSID,
+
+
+
+
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:1:package com.contexta.controller;
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:3:import com.contexta.model.MovementEvent;
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:9: * REST endpoint for movement detection analytics.
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:11: * POST /movement — receives movement data from Android client,
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:12: * returns a movement profile with suggested actions.
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:14:@RestController
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:15:@RequestMapping("/movement")
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:16:public class MovementController {
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:19:     * Processes a movement detection event and returns suggested 
+actions.
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:21:     * @param event the movement event from the device
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:22:     * @return movement profile with suggestions
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:25:    public MovementResponse processMovement(@RequestBody 
+MovementEvent event) {
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:45:            suggestion = "You're stationary — no movement detected";
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:49:        return new MovementResponse(
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:60:     * GET /movement/status — quick health check for movement 
+service.
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:65:                "service", "movement-detection",
+backend\contexta-backend\src\main\java\com\contexta\controller\MovementControll
+er.java:71:    public record MovementResponse(
+
+
+
+
+backend\contexta-backend\src\main\java\com\contexta\model\HomeEvent.java:1:pack
+age com.contexta.model;
+backend\contexta-backend\src\main\java\com\contexta\model\HomeEvent.java:4: * 
+Request DTO for home detection events.
+backend\contexta-backend\src\main\java\com\contexta\model\HomeEvent.java:7:publ
+ic record HomeEvent(
+
+
+
+
+backend\contexta-backend\src\main\java\com\contexta\model\MovementEvent.java:1:
+package com.contexta.model;
+backend\contexta-backend\src\main\java\com\contexta\model\MovementEvent.java:4:
+ * Request DTO for movement detection events.
+backend\contexta-backend\src\main\java\com\contexta\model\MovementEvent.java:7:
+public record MovementEvent(
+
+
+
+
+backend\contexta-backend\src\main\java\com\contexta\ContextaApplication.java:1:
+package com.contexta;
+backend\contexta-backend\src\main\java\com\contexta\ContextaApplication.java:4:
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+backend\contexta-backend\src\main\java\com\contexta\ContextaApplication.java:5:
+import org.springframework.context.annotation.Bean;
+backend\contexta-backend\src\main\java\com\contexta\ContextaApplication.java:9:
+@SpringBootApplication
+backend\contexta-backend\src\main\java\com\contexta\ContextaApplication.java:10
+:public class ContextaApplication {
+backend\contexta-backend\src\main\java\com\contexta\ContextaApplication.java:13
+:		SpringApplication.run(ContextaApplication.class, args);
+
+
+
+
+backend\contexta-backend\src\main\resources\application.properties:1:spring.app
+lication.name=contexta-backend
+
+
+
+
+backend\contexta-backend\pom.xml:11:	<groupId>com.contexta</groupId>
+backend\contexta-backend\pom.xml:12:	<artifactId>contexta-backend</artifactId>
+backend\contexta-backend\pom.xml:14:	<name>contexta-backend</name>
+backend\contexta-backend\pom.xml:15:	<description>Context-aware system 
+API</description>
+
+
+

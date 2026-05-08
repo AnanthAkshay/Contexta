@@ -3,7 +3,7 @@
 > **Your phone already has everything it needs to help you. Contexta makes it act on it — on-device, privately, without asking.**
 
 <p align="center">
-  <img src="assets/logo.png" alt="Contexta Logo" width="220"/>
+  <img src="assets/logo.png" alt="Contexta Logo" width="500"/>
 </p>
 
 <p align="center">
@@ -62,32 +62,32 @@ Contexta features a **Premium Light Glassmorphism** interface. Soft gradients, f
 
 ### 1. The Intelligence Dashboard
 <p align="center">
-  <img src="assets/screenshots/context_tab.png" alt="Dashboard View" width="280"/>
+  <img src="assets/screenshots/dashboard_live.png" alt="Dashboard View" width="280"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/audit_log.png" alt="Audit Log" width="280"/>
+  <img src="assets/screenshots/activity_log.png" alt="Activity Log" width="280"/>
 </p>
 <p align="center">
-  <em><strong>Left:</strong> The main observer dashboard waiting for triggers. &nbsp;·&nbsp; <strong>Right:</strong> Scrolling down reveals the real-time Activity Audit Log.</em>
+  <em><strong>Left:</strong> The main observer dashboard waiting for triggers. &nbsp;·&nbsp; <strong>Right:</strong> Real-time Activity Audit Log recording autonomous decisions.</em>
 </p>
 
-### 2. Autonomous Actions
+### 2. Context-Aware Triggers
 <p align="center">
-  <img src="assets/screenshots/signal_monitor.png" alt="Meeting Detection" width="280"/>
+  <img src="assets/screenshots/meeting_detection.png" alt="Meeting Detection" width="280"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/home_summary.png" alt="Home Detection" width="280"/>
+  <img src="assets/screenshots/movement_detection.png" alt="Movement Detection" width="280"/>
 </p>
 <p align="center">
-  <em><strong>Left:</strong> Calendar context injection instantly triggering DND & Silent Mode. &nbsp;·&nbsp; <strong>Right:</strong> WiFi SSID match successfully applying the "Home Profile".</em>
+  <em><strong>Left:</strong> Calendar context ("Sprint Standup") instantly triggering DND & Silent Mode. &nbsp;·&nbsp; <strong>Right:</strong> Kinetic context (Walking) launching Maps & Music.</em>
 </p>
 
-### 3. Settings & Overrides
+### 3. Location Intelligence
 <p align="center">
-  <img src="assets/screenshots/override_panel.png" alt="Override System" width="280"/>
+  <img src="assets/screenshots/home_away.png" alt="Home Detection - Away" width="280"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/classifier_debug.png" alt="Settings & Config" width="280"/>
+  <img src="assets/screenshots/home_detected.png" alt="Home Detection - Home" width="280"/>
 </p>
 <p align="center">
-  <em><strong>Left:</strong> User overriding an automation (logged for reinforcement). &nbsp;·&nbsp; <strong>Right:</strong> The advanced settings and threshold tuning panel.</em>
+  <em><strong>Left:</strong> WiFi mismatch ("OfficeWiFi_5G") keeping the device in Away mode. &nbsp;·&nbsp; <strong>Right:</strong> SSID match ("MyHomeWiFi") successfully applying the Home Profile.</em>
 </p>
 
 ---

@@ -321,6 +321,16 @@ export default function HomeScreen() {
     ).start();
   }, []);
 
+  // Expose handlers to window for automated testing / Puppeteer
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      (window as any).simulateInjectMeeting = () => { handleInjectMeeting(); };
+      (window as any).simulateOverride = () => { handleOverride(); };
+      (window as any).simulateWalking = () => { handleInjectWalking(); };
+      (window as any).simulateHome = () => { handleInjectHome(); };
+    }
+  }, [handleInjectMeeting, handleOverride, handleInjectWalking, handleInjectHome]);
+
   const makeLog = useCallback((context: string, action: string, isOverride = false, source = 'System'): LogEntry => {
     logIdRef.current += 1;
     return { id: logIdRef.current, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }), context, action, isOverride, source };

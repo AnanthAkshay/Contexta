@@ -26,4 +26,4 @@ The following AI tools were used during development:
 All AI-generated code snippets were thoroughly reviewed, manually tested, and fully understood by the team before being integrated into the codebase. The team maintains full responsibility for the stability and security of the application.
 
 ## 6. Contact
-Akshay A (1MS24IS013) — akshaya@example.com
+Akshay A (1MS24IS013) — ananthakshay2006@gmail.com

@@ -18,6 +18,7 @@
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
+- [Demo Video](#-demo-video)
 - [The Problem](#-the-problem)
 - [The Solution](#-the-solution)
 - [App Gallery & UX](#-app-gallery--ux)
@@ -25,6 +26,12 @@
 - [Intelligent Context Pipelines](#-intelligent-context-pipelines)
 - [Privacy & Performance](#-privacy--performance)
 - [Team](#-team)
+
+---
+
+## 🎥 Demo Video
+
+**[🎬 Watch the full Contexta Demo Video here](./Contexta_Demo.mp4)**
 
 ---
 

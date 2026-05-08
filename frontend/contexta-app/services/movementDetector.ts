@@ -39,6 +39,8 @@ export interface MovementContextResult {
 
 // ── Core detection function ──────────────────────────────────
 
+import { syncMovementData } from './apiService';
+
 /**
  * Determines movement context from accelerometer data.
  */
@@ -96,6 +98,8 @@ export function determineMovementContext(
   console.log(`│ → Suggestion : ${result.suggestion}`);
   console.log(`│ → ETA        : ${result.eta}`);
   console.log('└──────────────────────────────────────────');
+
+  syncMovementData(result).catch(() => {});
 
   return result;
 }

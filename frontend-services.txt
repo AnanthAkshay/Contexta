@@ -1,0 +1,6 @@
+﻿D:\samsung hackathon\Contexta\frontend\contexta-app\services\calendarBridge.ts
+D:\samsung hackathon\Contexta\frontend\contexta-app\services\contextDetector.ts
+D:\samsung hackathon\Contexta\frontend\contexta-app\services\homeBridge.ts
+D:\samsung hackathon\Contexta\frontend\contexta-app\services\homeDetector.ts
+D:\samsung hackathon\Contexta\frontend\contexta-app\services\movementBridge.ts
+D:\samsung hackathon\Contexta\frontend\contexta-app\services\movementDetector.ts

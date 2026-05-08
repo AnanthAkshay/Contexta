@@ -1,3 +1,7 @@
+![Platform](https://img.shields.io/badge/Platform-Android-green)
+![Framework](https://img.shields.io/badge/Framework-React%20Native%20Expo-blue)
+![Backend](https://img.shields.io/badge/Backend-Spring%20Boot-brightgreen)
+
 # Contexta
 
 **Context-aware smartphone automation that makes your phone proactive, not reactive.**
@@ -63,50 +67,40 @@ npm install
 npx expo start
 ```
 
+## Team
+| Name | Role |
+|------|------|
+| [Name 1] | Frontend / React Native |
+| [Name 2] | Android Native Modules |
+| [Name 3] | Backend / Spring Boot |
+| [Name 4] | Integration & Testing |
+
+## Screenshots
+> Screenshots from a Samsung Galaxy device running the app in demo mode.
+
+| Dashboard — Home Mode | Meeting Detection Active | Movement — Walking |
+|---|---|---|
+| ![Home Mode](docs/screenshots/home-mode.png) | ![Meeting](docs/screenshots/meeting-active.png) | ![Walking](docs/screenshots/walking.png) |
+
+## Download APK
+Download: [contexta-debug.apk](releases/contexta-debug.apk)
+
+To install on Android:
+1. Enable "Install from unknown sources" in Settings → Security
+2. Transfer APK to device
+3. Tap to install
+
+## AI Disclosure
+See [AI_DISCLOSURE.md](AI_DISCLOSURE.md) for details on how AI tools were used in this project.
+
 ## Project Structure
 
 ```
 Contexta/
 ├── android/                    # Native Android module
-│   └── app/src/main/java/com/contexta/android/
-│       ├── MainActivity.java                    # Pipeline orchestrator (3 features)
-│       ├── action/
-│       │   ├── MeetingModeController.java       # Silent + DND control
-│       │   ├── MovementActionController.java    # Maps/Spotify intents
-│       │   └── HomeProfileController.java       # Profile switching
-│       ├── detector/
-│       │   ├── MeetingDetector.java             # Calendar query + classify
-│       │   ├── MovementDetector.java            # Accelerometer variance
-│       │   └── HomeDetector.java                # WiFi SSID matching
-│       └── model/
-│           ├── CalendarEventResult.java         # Meeting result POJO
-│           ├── MovementResult.java              # Movement result POJO
-│           └── HomeDetectionResult.java         # Home result POJO
 ├── frontend/                   # React Native (Expo) app
-│   └── contexta-app/
-│       ├── app/(tabs)/
-│       │   ├── index.tsx                        # Main dashboard (3 cards)
-│       │   ├── explore.tsx                      # Explore tab
-│       │   ├── settings.tsx                     # Home SSID config
-│       │   └── _layout.tsx                      # Tab navigator
-│       └── services/
-│           ├── calendarBridge.ts                # Mock calendar bridge
-│           ├── contextDetector.ts               # Meeting context logic
-│           ├── movementBridge.ts                # Mock accelerometer bridge
-│           ├── movementDetector.ts              # Movement context logic
-│           ├── homeBridge.ts                    # Mock WiFi bridge
-│           └── homeDetector.ts                  # Home context logic
 ├── backend/                    # Spring Boot API
-│   └── contexta-backend/
-│       └── src/main/java/com/contexta/
-│           ├── ContextaApplication.java         # App entry + CORS
-│           ├── controller/
-│           │   ├── ContextController.java       # POST /context
-│           │   ├── MovementController.java      # POST /movement
-│           │   └── HomeController.java          # POST /home/detect
-│           └── model/
-│               ├── MovementEvent.java           # Movement DTO
-│               └── HomeEvent.java               # Home DTO
 └── docs/
     └── architecture.md                          # System architecture
 ```
+

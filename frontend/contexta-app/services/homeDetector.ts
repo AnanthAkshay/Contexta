@@ -37,6 +37,8 @@ export interface HomeContextResult {
 
 // ── Core detection function ──────────────────────────────────
 
+import { syncHomeDetection } from './apiService';
+
 /**
  * Determines home context from WiFi data.
  */
@@ -76,6 +78,8 @@ export function determineHomeContext(data: HomeData): HomeContextResult {
   console.log(`│ → Volume     : ${result.profile.volumeLevel}`);
   console.log(`│ → Notif.     : ${result.profile.notificationGrouping}`);
   console.log('└──────────────────────────────────────────');
+
+  syncHomeDetection(data).catch(() => {});
 
   return result;
 }

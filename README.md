@@ -62,9 +62,9 @@ Contexta features a **Premium Light Glassmorphism** interface. Soft gradients, f
 
 ### 1. The Intelligence Dashboard
 <p align="center">
-  <img src="assets/screenshots/dashboard_live.png" alt="Dashboard View" width="280"/>
+  <img src="assets/screenshots/context_tab.png" alt="Dashboard View" width="280"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/activity_log.png" alt="Activity Log" width="280"/>
+  <img src="assets/screenshots/audit_log.png" alt="Activity Log" width="280"/>
 </p>
 <p align="center">
   <em><strong>Left:</strong> The main observer dashboard waiting for triggers. &nbsp;·&nbsp; <strong>Right:</strong> Real-time Activity Audit Log recording autonomous decisions.</em>
@@ -72,9 +72,9 @@ Contexta features a **Premium Light Glassmorphism** interface. Soft gradients, f
 
 ### 2. Context-Aware Triggers
 <p align="center">
-  <img src="assets/screenshots/meeting_detection.png" alt="Meeting Detection" width="280"/>
+  <img src="assets/screenshots/signal_monitor.png" alt="Meeting Detection" width="280"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/movement_detection.png" alt="Movement Detection" width="280"/>
+  <img src="assets/screenshots/override_panel.png" alt="Movement Detection" width="280"/>
 </p>
 <p align="center">
   <em><strong>Left:</strong> Calendar context ("Sprint Standup") instantly triggering DND & Silent Mode. &nbsp;·&nbsp; <strong>Right:</strong> Kinetic context (Walking) launching Maps & Music.</em>
@@ -82,9 +82,9 @@ Contexta features a **Premium Light Glassmorphism** interface. Soft gradients, f
 
 ### 3. Location Intelligence
 <p align="center">
-  <img src="assets/screenshots/home_away.png" alt="Home Detection - Away" width="280"/>
+  <img src="assets/screenshots/classifier_debug.png" alt="Home Detection - Away" width="280"/>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/home_detected.png" alt="Home Detection - Home" width="280"/>
+  <img src="assets/screenshots/home_summary.png" alt="Home Detection - Home" width="280"/>
 </p>
 <p align="center">
   <em><strong>Left:</strong> WiFi mismatch ("OfficeWiFi_5G") keeping the device in Away mode. &nbsp;·&nbsp; <strong>Right:</strong> SSID match ("MyHomeWiFi") successfully applying the Home Profile.</em>

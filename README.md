@@ -1,10 +1,8 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Contexta Logo" width="120" />
+<img src="assets/logo.png" alt="Contexta — Connect · Understand · Transform" width="480" />
 
-# CONTEXTA
-
-### Context-Aware Phone Intelligence · On-Device AI
+<br/><br/>
 
 > **Your phone already has everything it needs to help you. Contexta makes it act on it — on-device, privately, without asking.**
 
@@ -14,7 +12,7 @@
 [![Hackathon](https://img.shields.io/badge/Hackathon-OpenClaw%20by%20Samsung%20Prism%202026-red?style=flat-square)](https://www.samsungprism.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-[📲 Download APK](Contexta-Release.apk) · [🎬 Watch Demo](Contexta_Demo.mp4) · [📄 Full Proposal](Contexta_Openclaw.pdf)
+[📲 Download APK](Contexta-Release.apk) &nbsp;·&nbsp; [🎬 Watch Demo](Contexta_Demo.mp4) &nbsp;·&nbsp; [📄 Full Proposal](Contexta_Openclaw.pdf)
 
 </div>
 
@@ -57,9 +55,9 @@ Whether you're stepping into a meeting, walking to a destination, or arriving ho
 Smartphones are inherently **reactive**. This creates friction at every step of a user's day:
 
 - **Manual Switching** — Users must remember to silence their phones before meetings or raise brightness when stepping outdoors.
-- **Micro-Distractions** — The average user makes ~40 minor setting adjustments per day. Collectively, this fragments focus and wastes cognitive energy.
-- **Rigid Schedules** — Tools like "Do Not Disturb" operate on fixed time windows, ignoring sudden real-world changes like an unexpected call or a walk.
-- **Context Blindness** — No native Android feature connects your calendar, your movement, and your location into a unified, proactive response.
+- **Micro-Distractions** — The average user makes ~40 minor setting adjustments per day, collectively fragmenting focus and wasting cognitive energy.
+- **Rigid Schedules** — Tools like "Do Not Disturb" operate on fixed time windows, ignoring sudden real-world changes.
+- **Context Blindness** — No native Android feature connects your calendar, movement, and location into a unified, proactive response.
 
 ---
 
@@ -70,10 +68,9 @@ Contexta introduces a continuous, on-device perception-action loop:
 ```
 ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
 │  OBSERVE │────▶│  DECIDE  │────▶│   ACT    │────▶│  LEARN   │
-│ Sensors  │     │ On-Device│     │ Settings │     │ Overrides│
-│ Calendar │     │   ML/    │     │  DND /   │     │ Feedback │
-│ WiFi/    │     │  Logic   │     │  Volume/ │     │  Loop    │
-│ Accel.   │     │          │     │  Apps    │     │          │
+│ Calendar │     │ On-Device│     │  DND /   │     │ Override │
+│ WiFi     │     │  Logic   │     │ Volume / │     │ Feedback │
+│ Accel.   │     │  + ML    │     │  Apps    │     │  Loop    │
 └──────────┘     └──────────┘     └──────────┘     └──────────┘
 ```
 
@@ -86,73 +83,55 @@ Contexta introduces a continuous, on-device perception-action loop:
 
 ## 📱 Screenshots
 
-### 1. Initial Dashboard — Cold Start
+### Full Session Walkthrough — Cold Start → Meeting → Walking → Home
 
-The Contexta Intelligence Dashboard at startup. Three detectors (Meeting, Movement, Home) are idle, awaiting the first detection cycle.
+<table>
+  <tr>
+    <td align="center"><b>1. Initial Dashboard</b></td>
+    <td align="center"><b>2. Meeting Detected → DND ON</b></td>
+    <td align="center"><b>3. Walking → Maps & Music</b></td>
+    <td align="center"><b>4. Home Profile Active</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/dashboard_initial.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/meeting_cold_start.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/walking_detection.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/home_detection_home.jpeg" width="180"/></td>
+  </tr>
+  <tr>
+    <td>Three detectors idle at launch. 0 actions, HOME OFF, DND OFF.</td>
+    <td>Calendar finds "Sprint Standup" (91% conf). DND instantly enabled.</td>
+    <td>Accelerometer variance > 0.8 (87% conf). Maps & Music offered.</td>
+    <td>SSID "MyHomeWiFi" matches (95% conf). HOME ON, DND ON.</td>
+  </tr>
+</table>
 
-<img src="assets/screenshots/dashboard_initial.jpeg" alt="Dashboard initial state" width="320" />
-
----
-
-### 2. Meeting Detection — DND Triggered
-
-The Calendar detector identifies an upcoming "Sprint Standup" event with 91% confidence. DND is instantly enabled via Android's NotificationManager API.
-
-<img src="assets/screenshots/meeting_cold_start.jpeg" alt="Meeting detection — DND enabled" width="320" />
-
----
-
-### 3. Walking Detection — Maps & Music Launched
-
-The Accelerometer computes XYZ variance > 0.8, classifying the user as walking (87% confidence). Contexta proactively opens Maps and Music in one tap.
-
-<img src="assets/screenshots/walking_detection.jpeg" alt="Walking detection — Maps and Music" width="320" />
-
----
-
-### 4. Home Detection — HOME Profile Applied
-
-WiFi SSID "MyHomeWiFi" matches the configured home network with 95% confidence. The Home Profile is applied: volumes normalized, app restrictions lifted.
-
-<img src="assets/screenshots/home_detection_home.jpeg" alt="Home detection — HOME profile" width="320" />
-
----
-
-### 5. Away Mode — Office WiFi Detected
-
-WiFi SSID "OfficeWiFi_5G" does not match home. The device correctly stays in Away mode, keeping Office-appropriate settings active.
-
-<img src="assets/screenshots/home_detection_away.jpeg" alt="Home detection — AWAY mode" width="320" />
-
----
-
-### 6. Activity Log — Full Event Timeline
-
-The real-time Activity Audit Log showing all 8 autonomous decisions made in a single session: 2× DND triggers (Calendar), 1× Walking → Maps/Music, 2× Profile→HOME, 2× Profile→AWAY.
-
-<img src="assets/screenshots/activity_log_full.jpeg" alt="Full activity log — 8 events" width="320" />
-
----
-
-### 7. Home Profile Active State
-
-HOME mode confirmed ON, DND still ON from an earlier meeting event. 5 actions have been taken in this session with the full pipeline running live.
-
-<img src="assets/screenshots/home_profile_active.jpeg" alt="Home active, DND on — 5 events" width="320" />
-
----
-
-### 8. Meeting Detection — Repeated Trigger
-
-Calendar continuously re-scans the ±30-minute window. Multiple "DND Enabled" events confirm consistent responsiveness as calendar state is re-evaluated.
-
-<img src="assets/screenshots/meeting_detection_active.jpeg" alt="Meeting detection repeated" width="320" />
+<table>
+  <tr>
+    <td align="center"><b>5. Away Mode — Office WiFi</b></td>
+    <td align="center"><b>6. Home + DND — 5 Events</b></td>
+    <td align="center"><b>7. Meeting Re-Triggered — 6 Events</b></td>
+    <td align="center"><b>8. Full Activity Log — 8 Events</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/home_detection_away.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/home_profile_active.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/meeting_detection_active.jpeg" width="180"/></td>
+    <td><img src="assets/screenshots/activity_log_full.jpeg" width="180"/></td>
+  </tr>
+  <tr>
+    <td>SSID "OfficeWiFi_5G" ≠ home. Device correctly stays AWAY.</td>
+    <td>HOME confirmed ON. DND still active from earlier meeting. 5 actions.</td>
+    <td>Calendar re-scans every cycle. Consistent DND re-trigger. 6 events.</td>
+    <td>Complete audit: 3× DND, 1× Walk→Music, 2× HOME, 2× AWAY.</td>
+  </tr>
+</table>
 
 ---
 
 ## 🏗️ System Architecture
 
-Contexta's architecture bridges a high-fidelity React Native frontend with a powerful, low-latency Android Java Native Engine.
+Contexta bridges a high-fidelity React Native frontend with a low-latency Android Java Native Engine.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -160,8 +139,8 @@ Contexta's architecture bridges a high-fidelity React Native frontend with a pow
 │                                                                      │
 │   ContextDashboard   ActivityLog   OverridePanel   DetectorCards     │
 ├──────────────────┬───────────────────┬───────────────────────────────┤
-│  CalendarBridge  │   MovementBridge  │        HomeBridge             │
-│  (JSI / RN NM)   │   (JSI / RN NM)  │       (JSI / RN NM)           │
+│  CalendarBridge  │   MovementBridge  │         HomeBridge            │
+│  (JSI / RN NM)   │   (JSI / RN NM)  │        (JSI / RN NM)          │
 ├──────────────────┴───────────────────┴───────────────────────────────┤
 │          ANDROID NATIVE SENSOR FUSION ENGINE  (Java)                 │
 │                                                                      │
@@ -170,14 +149,14 @@ Contexta's architecture bridges a high-fidelity React Native frontend with a pow
 │  │  CalendarContract│  │  SensorManager   │  │   WifiManager    │   │
 │  │  ±30min scan     │  │  XYZ variance    │  │   SSID match     │   │
 │  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘   │
-│           │                     │                      │             │
-│  ┌────────▼─────────┐  ┌────────▼─────────┐  ┌────────▼─────────┐   │
+│           ▼                     ▼                      ▼             │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐   │
 │  │ MeetingModeCtrl  │  │ MovementAction   │  │ HomeProfileCtrl  │   │
 │  │ DND / Silent API │  │ Maps · Music     │  │ Volume · Media   │   │
 │  └──────────────────┘  └──────────────────┘  └──────────────────┘   │
 │                                                                      │
 │  ╔══════════════════════════════════════════════════════════════╗    │
-│  ║            WorkManager  (battery-efficient polling)          ║    │
+│  ║         WorkManager  (battery-efficient background polling)  ║    │
 │  ╚══════════════════════════════════════════════════════════════╝    │
 └──────────────────────────────────────────────────────────────────────┘
 ```
@@ -205,13 +184,13 @@ CalendarContract ──▶ ±30min window scan ──▶ Keyword match
                                                     │
                                                     ▼
                                    ACTION_INTERRUPTION_FILTER_PRIORITY
-                                   (DND ON · Ringer Silenced)
+                                        (DND ON · Ringer Silenced)
 ```
 
 - **Sensor:** Android `CalendarContract` provider
 - **Window:** ±30 minutes from current time
 - **Keywords:** `Meeting`, `Call`, `Standup`, `Interview`, `Review`
-- **Confidence:** Reported as percentage match (e.g., 91%)
+- **Confidence:** Percentage match (e.g., 91%)
 - **Action:** `NotificationManager.ACTION_INTERRUPTION_FILTER_PRIORITY` + silent ringer
 
 ---
@@ -224,18 +203,18 @@ SensorManager (SENSOR_DELAY_NORMAL)
         ▼
 XYZ magnitude vector ──▶ Sliding variance window
                                 │
-               ┌────────────────┴───────────────┐
-          var > 3.0                         var > 0.8
-               │                                │
-               ▼                                ▼
-           DRIVING                          WALKING
-       Launch Google Maps              Launch Music App
+               ┌────────────────┴────────────────┐
+          var > 3.0                          var > 0.8
+               │                                 │
+               ▼                                 ▼
+           DRIVING                           WALKING
+       Launch Google Maps               Launch Music App
 ```
 
 - **Sensor:** `SensorManager.SENSOR_DELAY_NORMAL` (TYPE_ACCELEROMETER)
-- **Math:** `variance = Σ(|magnitude - mean|²) / n`  over a sliding window
+- **Math:** `variance = Σ(|magnitude − mean|²) / n` over a sliding window
 - **Thresholds:** Variance > 3.0 → Driving · Variance > 0.8 → Walking
-- **Confidence:** Reported as percentage (e.g., 87%)
+- **Confidence:** Percentage (e.g., 87%)
 - **Action:** Fires Android `Intent` to launch Maps (Driving) or Spotify/Music (Walking)
 
 ---
@@ -249,18 +228,18 @@ WifiManager.getConnectionInfo()
 Current SSID ──▶ Compare with stored Home SSID
                         │
           ┌─────────────┴──────────────┐
-       MATCH                        NO MATCH
+       MATCH                       NO MATCH
           │                            │
           ▼                            ▼
     Profile → HOME               Profile → AWAY
  (normalize volumes,          (office-appropriate
-  lift app restrictions)         settings retained)
+  lift app restrictions)        settings retained)
 ```
 
-- **Sensor:** `WifiManager.getConnectionInfo()` (no GPS required)
+- **Sensor:** `WifiManager.getConnectionInfo()` — no GPS required
 - **Logic:** String-matches current SSID against user-configured home network
-- **Confidence:** Fixed 95% (based on SSID uniqueness assumption)
-- **Home Action:** Normalizes ringer volume, lifts notification restrictions, applies comfort media settings
+- **Confidence:** Fixed 95% (SSID uniqueness assumption)
+- **Home Action:** Normalizes ringer, lifts notification restrictions, applies comfort media settings
 - **Away Action:** Retains DND-compatible office profile; conserves battery
 
 ---
@@ -284,7 +263,7 @@ Current SSID ──▶ Compare with stored Home SSID
 
 ```
 Contexta/
-├── android/                    # Android native module (Java)
+├── android/                      # Android native module (Java)
 │   └── app/src/main/java/
 │       ├── detectors/
 │       │   ├── MeetingDetector.java
@@ -298,7 +277,7 @@ Contexta/
 │           ├── CalendarBridge.java
 │           ├── MovementBridge.java
 │           └── HomeBridge.java
-├── frontend/                   # React Native / Expo app (TypeScript)
+├── frontend/                     # React Native / Expo app (TypeScript)
 │   ├── components/
 │   │   ├── ContextDashboard.tsx
 │   │   ├── DetectorCard.tsx
@@ -308,17 +287,26 @@ Contexta/
 │       ├── CalendarService.ts
 │       ├── MovementService.ts
 │       └── HomeService.ts
-├── backend/                    # Spring Boot 3 (Java)
+├── backend/                      # Spring Boot 3 (Java)
 │   └── src/main/java/
 │       ├── config/
 │       ├── controller/
 │       └── service/
 ├── assets/
-│   └── screenshots/            # App screenshots
-├── docs/                       # Architecture diagrams
-├── Contexta-Release.apk        # Prebuilt release APK
-├── Contexta_Demo.mp4           # Demo walkthrough
-├── Contexta_Openclaw.pdf       # Full hackathon proposal
+│   ├── logo.png                  # Contexta brand logo
+│   └── screenshots/              # App screenshots (8 screens)
+│       ├── dashboard_initial.jpeg
+│       ├── meeting_cold_start.jpeg
+│       ├── walking_detection.jpeg
+│       ├── home_detection_home.jpeg
+│       ├── home_detection_away.jpeg
+│       ├── home_profile_active.jpeg
+│       ├── meeting_detection_active.jpeg
+│       └── activity_log_full.jpeg
+├── docs/                         # Architecture diagrams
+├── Contexta-Release.apk          # Prebuilt release APK
+├── Contexta_Demo.mp4             # Demo walkthrough video
+├── Contexta_Openclaw.pdf         # Full hackathon proposal
 └── README.md
 ```
 
@@ -328,11 +316,11 @@ Contexta/
 
 | Principle | Implementation |
 |-----------|---------------|
-| **Zero Cloud Processing** | All detection logic runs 100% on-device. No calendar events, GPS data, or sensor telemetry ever leave the device. |
+| **Zero Cloud Processing** | All detection logic runs 100% on-device. No calendar events, GPS data, or sensor telemetry are ever transmitted externally. |
 | **No Persistent Storage** | Sensor readings are processed in-memory and discarded immediately after classification. |
-| **Negligible Battery Impact** | Uses Android WorkManager with batched tasks and passive listeners, avoiding aggressive CPU Wakelocks. |
+| **Negligible Battery Impact** | Android WorkManager with batched tasks and passive listeners — no aggressive CPU Wakelocks. |
 | **Sub-100ms Latency** | Native Java execution eliminates JS-bridge round-trips for time-critical actions. |
-| **Offline Ready** | Works without any internet connection. All intelligence is pre-compiled on the device. |
+| **Offline Ready** | Works with zero internet connection. All intelligence is pre-compiled on the device. |
 
 ---
 
@@ -374,7 +362,7 @@ cd Contexta/backend
 adb install Contexta-Release.apk
 ```
 
-> Grant permissions on first launch: **Calendar**, **Physical Activity**, and **Location (for WiFi SSID access)**.
+> Grant permissions on first launch: **Calendar**, **Physical Activity**, and **Nearby WiFi Devices**.
 
 ---
 
@@ -395,8 +383,12 @@ adb install Contexta-Release.apk
 
 <div align="center">
 
-Made with ❤️ in Bengaluru · M.S. Ramaiah Institute of Technology
+<img src="assets/logo.png" alt="Contexta" width="220"/>
 
-⚡ On-device · 🧠 No cloud · 📴 Offline ready
+<br/>
+
+Made with ❤️ in Bengaluru &nbsp;·&nbsp; M.S. Ramaiah Institute of Technology
+
+⚡ On-device &nbsp;·&nbsp; 🧠 No cloud &nbsp;·&nbsp; 📴 Offline ready
 
 </div>

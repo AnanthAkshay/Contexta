@@ -214,10 +214,10 @@ public class MainActivity extends AppCompatActivity {
             String time = formatEpoch(event.getTimestamp());
             if (event.isMeeting()) {
                 Log.i(TAG, "★ Detected MEETING: \"" + event.getTitle()
-                        + "\" at " + time);
+                        + "\" at " + time + " | conf: " + String.format(Locale.US, "%.2f", event.getConfidence()));
             } else {
                 Log.i(TAG, "  Event (non-meeting): \"" + event.getTitle()
-                        + "\" at " + time);
+                        + "\" at " + time + " | conf: " + String.format(Locale.US, "%.2f", event.getConfidence()));
             }
         }
         Log.i(TAG, "───────────────────────────────────────────");
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
             if (success) {
                 Log.i(TAG, "✔ System actions applied: Silent + DND");
                 Log.i(TAG, "Detected MEETING: \"" + primary.getTitle()
-                        + "\" at " + formatEpoch(primary.getTimestamp()));
+                        + "\" at " + formatEpoch(primary.getTimestamp()) + " | conf: " + String.format(Locale.US, "%.2f", primary.getConfidence()));
             } else {
                 Log.w(TAG, "⚠ Meeting mode partially applied (DND permission missing?)");
             }
@@ -254,7 +254,8 @@ public class MainActivity extends AppCompatActivity {
             if (result.isMoving()) {
                 Log.i(TAG, "🚶 MOVEMENT detected — variance: "
                         + String.format(Locale.US, "%.3f", result.getVariance())
-                        + " | mode: " + result.getTransportMode());
+                        + " | mode: " + result.getTransportMode()
+                        + " | conf: " + String.format(Locale.US, "%.2f", result.getConfidence()));
 
                 // Notify the action controller
                 movementActionController.onMovementDetected(result.getTransportMode());
@@ -281,11 +282,13 @@ public class MainActivity extends AppCompatActivity {
                 homeResult.getProfileMode());
 
         if (homeResult.isHome()) {
-            Log.i(TAG, "🏠 HOME detected — profile switched to HOME");
+            Log.i(TAG, "🏠 HOME detected — profile switched to HOME | conf: "
+                    + String.format(Locale.US, "%.2f", homeResult.getConfidence()));
             Log.i(TAG, "   SSID match: " + homeResult.getCurrentSSID()
                     + " == " + homeResult.getHomeSSID());
         } else {
-            Log.i(TAG, "🌍 AWAY — profile set to AWAY");
+            Log.i(TAG, "🌍 AWAY — profile set to AWAY | conf: "
+                    + String.format(Locale.US, "%.2f", homeResult.getConfidence()));
             Log.i(TAG, "   Current SSID: " + homeResult.getCurrentSSID()
                     + " ≠ Home SSID: " + homeResult.getHomeSSID());
         }

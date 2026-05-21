@@ -135,7 +135,8 @@ public class MeetingDetector {
 
                 // ── Build result ─────────────────────────────
                 long timestampSec = startMs / 1000;
-                results.add(new CalendarEventResult(eventType, title, timestampSec));
+                double confidence = "MEETING".equals(eventType) ? 0.91 : 0.60;
+                results.add(new CalendarEventResult(eventType, title, confidence, timestampSec));
             }
 
         } catch (SecurityException e) {

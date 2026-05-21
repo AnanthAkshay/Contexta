@@ -1,13 +1,14 @@
 /**
  * Contexta — services/movementDetector.ts
  * ─────────────────────────────────────────────────────────────
- * UPDATED: GPS-speed-aware movement classification.
+ * UPDATED: TFLite MLP Neural Network Movement Classifier.
  *
- * Original interface preserved 100% — only reasoning & ETAs
- * are now driven by real speed values when available.
+ * Replaces hardcoded variance thresholds with a trained neural
+ * network forward pass engine executing weights from Python model.
  */
 
 import type { AccelerometerData } from './movementBridge';
+const modelWeights = require('./model_weights.json');
 
 export interface MovementContextResult {
   context:       string;      // WALKING | COMMUTING | CYCLING | STATIONARY
@@ -19,19 +20,85 @@ export interface MovementContextResult {
   reason:        string;
   confidence:    number;
 
-  // GPS-extended fields (new, optional)
+  // GPS-extended fields
   speedKmh?:     number;
   distanceKm?:   string;
   activity?:     string;
 }
 
-export function determineMovementContext(data: AccelerometerData): MovementContextResult {
-  const { isMoving, variance, transportMode } = data;
+interface ModelWeights {
+  mean: number[];
+  std: number[];
+  W1: number[][];
+  b1: number[];
+  W2: number[][];
+  b2: number[];
+}
 
-  // Use GPS-derived speed if available, else estimate from variance
+const weights = modelWeights as ModelWeights;
+
+/**
+ * Computes the forward pass of our Multi-Layer Perceptron (Input: 2 -> Hidden: 8 -> Output: 4)
+ */
+function predictMLP(variance: number, speedKmh: number): { activityClass: number; confidence: number } {
+  // 1. Feature Standardization (Z-score Scaling using trained dataset statistics)
+  const varScaled = (variance - weights.mean[0]) / weights.std[0];
+  const speedScaled = (speedKmh - weights.mean[1]) / weights.std[1];
+  
+  const x = [varScaled, speedScaled];
+  
+  // 2. Layer 1: Input to Hidden (ReLU)
+  const z1 = new Array(8).fill(0);
+  for (let j = 0; j < 8; j++) {
+    let sum = weights.b1[j];
+    for (let i = 0; i < 2; i++) {
+      sum += x[i] * weights.W1[i][j];
+    }
+    z1[j] = sum;
+  }
+  const h1 = z1.map(val => Math.max(0, val)); // ReLU Activation
+  
+  // 3. Layer 2: Hidden to Output (Logits)
+  const z2 = new Array(4).fill(0);
+  for (let k = 0; k < 4; k++) {
+    let sum = weights.b2[k];
+    for (let j = 0; j < 8; j++) {
+      sum += h1[j] * weights.W2[j][k];
+    }
+    z2[k] = sum;
+  }
+  
+  // 4. Softmax Probability Normalization
+  const maxZ2 = Math.max(...z2);
+  const expZ2 = z2.map(val => Math.exp(val - maxZ2)); // stability shift
+  const sumExp = expZ2.reduce((a, b) => a + b, 0);
+  const probs = expZ2.map(val => val / sumExp);
+  
+  // Find Class Argmax and Confidence Probability
+  let bestClass = 0;
+  let maxProb = 0;
+  for (let k = 0; k < 4; k++) {
+    if (probs[k] > maxProb) {
+      maxProb = probs[k];
+      bestClass = k;
+    }
+  }
+  
+  return {
+    activityClass: bestClass,
+    confidence: maxProb,
+  };
+}
+
+export function determineMovementContext(data: AccelerometerData): MovementContextResult {
+  const { variance } = data;
+
+  // Resolve speed (use GPS speed if available, else estimate from variance)
   const speedKmh = data.speedKmh ?? estimateSpeedFromVariance(variance);
   const speedMs  = speedKmh / 3.6;
-  const activity = data.activity ?? transportMode.toUpperCase();
+
+  // Run TFLite-trained MLP Neural Network Classifier
+  const { activityClass, confidence } = predictMLP(variance, speedKmh);
 
   const distanceKm =
     data.distanceM !== undefined
@@ -40,69 +107,14 @@ export function determineMovementContext(data: AccelerometerData): MovementConte
         : `${Math.round(data.distanceM)} m`
       : undefined;
 
-  if (!isMoving) {
-    const reason = data.reason ??
-      (variance < 0.1
-        ? 'No accelerometer variance. Device fully stationary.'
-        : 'Low movement detected. User likely stationary or seated.');
+  // Map neural network class output
+  // Classes: 0: STATIONARY, 1: WALKING, 2: CYCLING, 3: COMMUTING (DRIVING)
+  console.log(`[MLP Neural Net] Inputs: var=${variance.toFixed(2)}, speed=${speedKmh.toFixed(1)} km/h | Predicted: ${activityClass} (${(confidence * 100).toFixed(1)}% conf)`);
 
-    return {
-      context:       'STATIONARY',
-      isMoving:      false,
-      transportMode: 'stationary',
-      variance,
-      suggestion:    'No action needed',
-      eta:           'N/A',
-      reason,
-      confidence:    data.confidence ?? 0.85,
-      speedKmh:      0,
-      distanceKm,
-      activity:      'STATIC',
-    };
-  }
-
-  // ── Moving: classify by mode ──────────────────────────────
-  switch (transportMode) {
-    case 'driving': {
+  switch (activityClass) {
+    case 1: { // WALKING
       const reason = data.reason ??
-        `Driving speed inferred from GPS (${speedKmh.toFixed(1)} km/h). Navigation mode active.`;
-      return {
-        context:       'COMMUTING',
-        isMoving:      true,
-        transportMode: 'driving',
-        variance,
-        suggestion:    'Open Maps for navigation assistance',
-        eta:           estimateEta(speedMs, 5000),  // rough 5km trip
-        reason,
-        confidence:    data.confidence ?? 0.93,
-        speedKmh,
-        distanceKm,
-        activity:      'DRIVING',
-      };
-    }
-
-    case 'cycling': {
-      const reason = data.reason ??
-        `Cycling speed detected (${speedKmh.toFixed(1)} km/h). Low-speed sustained movement.`;
-      return {
-        context:       'CYCLING',
-        isMoving:      true,
-        transportMode: 'cycling',
-        variance,
-        suggestion:    'Check for nearby bike lanes or repair shops',
-        eta:           estimateEta(speedMs, 2000),
-        reason,
-        confidence:    data.confidence ?? 0.82,
-        speedKmh,
-        distanceKm,
-        activity:      'CYCLING',
-      };
-    }
-
-    case 'walking':
-    default: {
-      const reason = data.reason ??
-        `Walking pace inferred (${speedKmh.toFixed(1)} km/h). Launch music for your walk.`;
+        `Walking pace classified by TFLite MLP (${speedKmh.toFixed(1)} km/h, ${(confidence * 100).toFixed(0)}% conf). Launching music.`;
       return {
         context:       'WALKING',
         isMoving:      true,
@@ -111,10 +123,65 @@ export function determineMovementContext(data: AccelerometerData): MovementConte
         suggestion:    'Launch music for your walk',
         eta:           estimateEta(speedMs, 500),
         reason,
-        confidence:    data.confidence ?? 0.88,
+        confidence,
         speedKmh,
         distanceKm,
         activity:      'WALKING',
+      };
+    }
+
+    case 2: { // CYCLING
+      const reason = data.reason ??
+        `Cycling pace classified by TFLite MLP (${speedKmh.toFixed(1)} km/h, ${(confidence * 100).toFixed(0)}% conf). Safe routes active.`;
+      return {
+        context:       'CYCLING',
+        isMoving:      true,
+        transportMode: 'cycling',
+        variance,
+        suggestion:    'Check for nearby bike lanes or repair shops',
+        eta:           estimateEta(speedMs, 2000),
+        reason,
+        confidence,
+        speedKmh,
+        distanceKm,
+        activity:      'CYCLING',
+      };
+    }
+
+    case 3: { // COMMUTING (DRIVING)
+      const reason = data.reason ??
+        `Driving speed classified by TFLite MLP (${speedKmh.toFixed(1)} km/h, ${(confidence * 100).toFixed(0)}% conf). Navigation active.`;
+      return {
+        context:       'COMMUTING',
+        isMoving:      true,
+        transportMode: 'driving',
+        variance,
+        suggestion:    'Open Maps for navigation assistance',
+        eta:           estimateEta(speedMs, 5000),
+        reason,
+        confidence,
+        speedKmh,
+        distanceKm,
+        activity:      'DRIVING',
+      };
+    }
+
+    case 0: // STATIONARY
+    default: {
+      const reason = data.reason ??
+        `Device classified as Stationary by TFLite MLP (accel variance ${variance.toFixed(3)}, ${(confidence * 100).toFixed(0)}% conf).`;
+      return {
+        context:       'STATIONARY',
+        isMoving:      false,
+        transportMode: 'stationary',
+        variance,
+        suggestion:    'No action needed',
+        eta:           'N/A',
+        reason,
+        confidence,
+        speedKmh:      0,
+        distanceKm,
+        activity:      'STATIC',
       };
     }
   }
@@ -135,3 +202,4 @@ function estimateEta(speedMs: number, distanceM: number): string {
   if (mins < 60)  return `~${mins} min`;
   return `~${Math.floor(mins / 60)}h ${mins % 60}m`;
 }
+

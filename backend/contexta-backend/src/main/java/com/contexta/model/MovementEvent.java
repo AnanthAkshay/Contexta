@@ -14,5 +14,11 @@ public record MovementEvent(
         /** Device ID or session identifier */
         String deviceId,
         /** Unix epoch seconds */
-        long timestamp
+        long timestamp,
+        /** ML classification confidence probability (0.0 to 1.0) */
+        Double confidence,
+        /** Client-reported movement speed in km/h */
+        Double speedKmh,
+        /** Client-estimated ETA */
+        String eta
 ) {}

@@ -25,13 +25,17 @@ public class MovementResult {
     /** Inferred transport mode — "walking", "driving", or "stationary" */
     private final String transportMode;
 
+    /** Classifier confidence score (0.0 - 1.0) calculated via TFLite MLP */
+    private final double confidence;
+
     /** Detection time as Unix epoch seconds */
     private final long timestamp;
 
-    public MovementResult(boolean isMoving, double variance, String transportMode, long timestamp) {
+    public MovementResult(boolean isMoving, double variance, String transportMode, double confidence, long timestamp) {
         this.isMoving = isMoving;
         this.variance = variance;
         this.transportMode = transportMode;
+        this.confidence = confidence;
         this.timestamp = timestamp;
     }
 
@@ -49,6 +53,10 @@ public class MovementResult {
         return transportMode;
     }
 
+    public double getConfidence() {
+        return confidence;
+    }
+
     public long getTimestamp() {
         return timestamp;
     }
@@ -61,6 +69,7 @@ public class MovementResult {
             json.put("isMoving", isMoving);
             json.put("variance", variance);
             json.put("transportMode", transportMode);
+            json.put("confidence", confidence);
             json.put("timestamp", timestamp);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -73,11 +82,11 @@ public class MovementResult {
         return toJson().toString();
     }
 
-    // ── Factory for stationary result ────────────────────────
+    // ── Factory for "stationary" result ────────────────────────
 
     /** Returns a result indicating no movement was detected */
     public static MovementResult stationary() {
-        return new MovementResult(false, 0.0, "stationary",
+        return new MovementResult(false, 0.0, "stationary", 1.00,
                 System.currentTimeMillis() / 1000);
     }
 }

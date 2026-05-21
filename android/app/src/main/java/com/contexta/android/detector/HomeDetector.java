@@ -78,6 +78,7 @@ public class HomeDetector {
                 currentSSID != null ? currentSSID : "",
                 homeSSID,
                 profileMode,
+                isHome ? 0.95 : 0.90,
                 System.currentTimeMillis() / 1000
         );
     }

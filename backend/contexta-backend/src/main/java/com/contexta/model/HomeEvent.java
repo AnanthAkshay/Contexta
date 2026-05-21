@@ -10,5 +10,9 @@ public record HomeEvent(
         /** Device ID or session identifier */
         String deviceId,
         /** Unix epoch seconds */
-        long timestamp
+        long timestamp,
+        /** Fused Location latitude */
+        Double latitude,
+        /** Fused Location longitude */
+        Double longitude
 ) {}

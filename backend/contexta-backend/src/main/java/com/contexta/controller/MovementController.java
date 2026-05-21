@@ -24,35 +24,88 @@ public class MovementController {
     @PostMapping
     public MovementResponse processMovement(@RequestBody MovementEvent event) {
         String suggestion;
-        String etaEstimate = "~25 min";
+        String etaEstimate;
 
-        if (event.isMoving()) {
-            switch (event.transportMode()) {
+        boolean overridden = false;
+        String finalMode = event.transportMode();
+        boolean finalMoving = event.isMoving();
+
+        if (event.speedKmh() != null) {
+            double speed = event.speedKmh();
+            if (speed > 35.0) {
+                if (!"driving".equals(finalMode) || !finalMoving) {
+                    finalMode = "driving";
+                    finalMoving = true;
+                    overridden = true;
+                }
+            } else if (speed >= 6.0) {
+                // Inferred as cycling if not already walking
+                if (!"walking".equals(finalMode) && (!"cycling".equals(finalMode) || !finalMoving)) {
+                    finalMode = "cycling";
+                    finalMoving = true;
+                    overridden = true;
+                }
+            } else if (speed >= 1.0) {
+                // Inferred as walking
+                if (!"walking".equals(finalMode) || !finalMoving) {
+                    finalMode = "walking";
+                    finalMoving = true;
+                    overridden = true;
+                }
+            } else {
+                // speed < 1.0 km/h: Override to stationary
+                if (!"stationary".equals(finalMode) || finalMoving) {
+                    finalMode = "stationary";
+                    finalMoving = false;
+                    overridden = true;
+                }
+            }
+        }
+
+        if (finalMoving) {
+            switch (finalMode) {
                 case "driving":
                     suggestion = "Open Maps for navigation assistance";
-                    etaEstimate = "~15 min by car";
+                    etaEstimate = (event.eta() != null && !event.eta().equals("N/A") && !overridden) ? event.eta() : "~15 min by car";
                     break;
                 case "walking":
                     suggestion = "Launch music for your walk";
-                    etaEstimate = "~25 min on foot";
+                    etaEstimate = (event.eta() != null && !event.eta().equals("N/A") && !overridden) ? event.eta() : "~25 min on foot";
+                    break;
+                case "cycling":
+                    suggestion = "Safety first - put on a helmet!";
+                    etaEstimate = (event.eta() != null && !event.eta().equals("N/A") && !overridden) ? event.eta() : "~20 min by cycle";
                     break;
                 default:
                     suggestion = "No action needed";
-                    etaEstimate = "N/A";
+                    etaEstimate = (event.eta() != null) ? event.eta() : "N/A";
                     break;
             }
         } else {
-            suggestion = "You're stationary — no movement detected";
+            suggestion = "You're stationary - no movement detected";
             etaEstimate = "N/A";
         }
 
+        double confidence = (event.confidence() != null)
+                ? event.confidence()
+                : Math.min(1.0, 0.90 + event.variance() * 0.01);
+
+        if (overridden) {
+            confidence = Math.min(confidence, 0.85);
+            System.out.printf("[Backend Movement Override] Speed=%.1f km/h mismatch! Overriding mode: %s -> %s (moving: %b -> %b, new confidence: %.2f%%)\n",
+                    event.speedKmh(), event.transportMode(), finalMode, event.isMoving(), finalMoving, confidence * 100);
+        } else {
+            System.out.printf("[Backend Movement] Processed %s: var=%.3f, speed=%s km/h, confidence=%.2f%%, eta=%s\n",
+                    event.transportMode(), event.variance(), event.speedKmh(), confidence * 100, etaEstimate);
+        }
+
         return new MovementResponse(
-                event.isMoving(),
+                finalMoving,
                 event.variance(),
-                event.transportMode(),
+                finalMode,
                 suggestion,
                 etaEstimate,
-                0.87 // hardcoded confidence for MVP
+                confidence
         );
     }
 

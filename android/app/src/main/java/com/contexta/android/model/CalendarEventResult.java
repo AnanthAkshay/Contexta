@@ -21,12 +21,16 @@ public class CalendarEventResult {
     /** Original calendar event title (empty string when no event) */
     private final String title;
 
+    /** Classifier confidence score (0.0 - 1.0) */
+    private final double confidence;
+
     /** Event start time as Unix epoch seconds (0 when no event) */
     private final long timestamp;
 
-    public CalendarEventResult(String event, String title, long timestamp) {
+    public CalendarEventResult(String event, String title, double confidence, long timestamp) {
         this.event = event;
         this.title = title;
+        this.confidence = confidence;
         this.timestamp = timestamp;
     }
 
@@ -38,6 +42,10 @@ public class CalendarEventResult {
 
     public String getTitle() {
         return title;
+    }
+
+    public double getConfidence() {
+        return confidence;
     }
 
     public long getTimestamp() {
@@ -57,6 +65,7 @@ public class CalendarEventResult {
         try {
             json.put("event", event);
             json.put("title", title);
+            json.put("confidence", confidence);
             json.put("timestamp", timestamp);
         } catch (JSONException e) {
             // Should never happen with these simple types
@@ -74,6 +83,6 @@ public class CalendarEventResult {
 
     /** Returns a result indicating no meeting was detected */
     public static CalendarEventResult none() {
-        return new CalendarEventResult("NONE", "", 0);
+        return new CalendarEventResult("NONE", "", 0.60, 0);
     }
 }

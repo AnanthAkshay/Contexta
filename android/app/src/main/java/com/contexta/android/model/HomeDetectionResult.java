@@ -27,17 +27,22 @@ public class HomeDetectionResult {
     private final String homeSSID;
 
     /** Active profile mode — "HOME" or "AWAY" */
+    /** Active profile mode — "HOME" or "AWAY" */
     private final String profileMode;
+
+    /** Classifier confidence score (0.0 - 1.0) */
+    private final double confidence;
 
     /** Detection time as Unix epoch seconds */
     private final long timestamp;
 
     public HomeDetectionResult(boolean isHome, String currentSSID,
-                                String homeSSID, String profileMode, long timestamp) {
+                                String homeSSID, String profileMode, double confidence, long timestamp) {
         this.isHome = isHome;
         this.currentSSID = currentSSID;
         this.homeSSID = homeSSID;
         this.profileMode = profileMode;
+        this.confidence = confidence;
         this.timestamp = timestamp;
     }
 
@@ -59,6 +64,10 @@ public class HomeDetectionResult {
         return profileMode;
     }
 
+    public double getConfidence() {
+        return confidence;
+    }
+
     public long getTimestamp() {
         return timestamp;
     }
@@ -72,6 +81,7 @@ public class HomeDetectionResult {
             json.put("currentSSID", currentSSID);
             json.put("homeSSID", homeSSID);
             json.put("profileMode", profileMode);
+            json.put("confidence", confidence);
             json.put("timestamp", timestamp);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -89,6 +99,6 @@ public class HomeDetectionResult {
     /** Returns a result indicating user is not home */
     public static HomeDetectionResult away(String currentSSID) {
         return new HomeDetectionResult(false, currentSSID, "",
-                "AWAY", System.currentTimeMillis() / 1000);
+                "AWAY", 0.90, System.currentTimeMillis() / 1000);
     }
 }

@@ -39,6 +39,15 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Contexta needs location to detect your movement and provide context-aware suggestions.",
+          "locationAlwaysAndWhenInUsePermission": "Contexta needs location to detect your movement and provide context-aware suggestions.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isIosBackgroundLocationEnabled": true
+        }
       ]
     ],
     "experiments": {

@@ -2,25 +2,41 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.contexta.android">
 
-    <!-- Calendar read permission -->
+    <!-- ── Calendar ──────────────────────────────────────────── -->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
 
-    <!-- Silent mode — change ringer volume/mode -->
+    <!-- ── Audio / DND ───────────────────────────────────────── -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
-    <!-- Do Not Disturb — requires Notification Policy Access (manual grant) -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
-    <!-- WiFi state — for home detection via SSID matching -->
+    <!-- ── WiFi / Network ────────────────────────────────────── -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Location — required on Android 8+ to read WiFi SSID -->
+    <!-- ── Location (GPS) — REQUIRED for live context engine ── -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <!-- Accelerometer sensor — declared for clarity (no runtime permission needed) -->
+    <!--
+        Background location — needed for passive tracking when app
+        is backgrounded. Must be declared separately from foreground.
+        NOTE: Requires separate runtime permission request on Android 10+.
+        Users will be prompted with "Allow all the time" option.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!--
+        Foreground service — required to keep GPS tracking alive
+        when the app is in the background (Android 8+).
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- ── Sensors ────────────────────────────────────────────── -->
+    <!-- Accelerometer: no runtime permission needed, declared for clarity -->
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <!-- GPS hardware declaration -->
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 
     <application
         android:name=".MainApplication"
@@ -31,12 +47,24 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+            Foreground service for background GPS tracking.
+            android:foregroundServiceType="location" is required on Android 10+
+            to access location from a foreground service.
+        -->
+        <service
+            android:name=".LocationTrackingService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
     </application>
 

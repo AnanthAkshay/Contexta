@@ -392,3 +392,7 @@ Made with ❤️ in Bengaluru &nbsp;·&nbsp; M.S. Ramaiah Institute of Technolog
 ⚡ On-device &nbsp;·&nbsp; 🧠 No cloud &nbsp;·&nbsp; 📴 Offline ready
 
 </div>
+
+
+.....
+

@@ -81,6 +81,7 @@ Contexta introduces a continuous, on-device perception-action loop:
 
 ---
 
+
 ## 📱 Screenshots
 
 ### Full Session Walkthrough — Cold Start → Meeting → Walking → Home
